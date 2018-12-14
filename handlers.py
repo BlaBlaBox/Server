@@ -56,6 +56,10 @@ def register():
     return render_template('register/index.html')
 
 
+@site.route('/login', methods=['GET', 'POST'])
+def login():
+    return render_template('login/index.html')
+
 @site.route('/watch', methods=['GET', 'POST'])
 def wath():
     return render_template('watch/index.html')
