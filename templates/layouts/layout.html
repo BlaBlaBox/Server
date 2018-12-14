@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+  <title>BlaBlaBox {% block title %} {% endblock %}</title>
+    <meta name="description" content="Watch movies bla bla...">
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i">
+    <link rel="stylesheet" href="assets/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/fonts/simple-line-icons.min.css">
+    <link rel="stylesheet" href="assets/css/Article-Cards.css">
+    <link rel="stylesheet" href="assets/css/Bold-BS4-Header-with-HTML5-Video-Background.css">
+    <link rel="stylesheet" href="assets/css/dh-row-text-image-right-responsive.css">
+    <link rel="stylesheet" href="assets/css/html5-video.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.css">
+    <link rel="stylesheet" href="assets/css/Navigation-with-Search.css">
+    <link rel="stylesheet" href="assets/css/News-Cards.css">
+    <link rel="stylesheet" href="assets/css/Registration-Form-with-Photo.css">
+    <link rel="stylesheet" href="assets/css/smoothproducts.css">
+</head>
+<body>
+
+  <nav class="navbar navbar-light navbar-expand-md navigation-clean-search">
+      <div class="container"><a class="navbar-brand" href="index.html">Bla Bla Box</a><button class="navbar-toggler" data-toggle="collapse" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+          <div class="collapse navbar-collapse"
+              id="navcol-1">
+              <ul class="nav navbar-nav">
+                  <li class="nav-item" role="presentation"><a class="nav-link" href="index.html" data-bs-hover-animate="pulse">Home</a></li>
+                  <li class="nav-item" role="presentation"><a class="nav-link" href="catalog-page.html" data-bs-hover-animate="pulse">Movies</a></li>
+                  <li class="nav-item" role="presentation"><a class="nav-link" href="mylibrary.html" data-bs-hover-animate="pulse">My Library</a></li>
+                  <li class="nav-item" role="presentation"><a class="nav-link" href="about-us.html" data-bs-hover-animate="pulse">About Us</a></li>
+                  <li class="nav-item" role="presentation" style="margin-top: 0px;"><a class="nav-link" href="cart.html" style="background-image: url(&quot;assets/img/shopping-cart-24.png&quot;);background-position: center;background-size: auto;background-repeat: no-repeat;height: 36px;color: rgb(243,6,18);font-size: 16px;"></a></li>
+              </ul>
+              <form class="form-inline mr-auto" target="_self">
+                  <div class="form-group" style="margin-left: 8px;"><label for="search-field"><i class="fa fa-search" style="padding: 0px;padding-right: 6px;"></i></label><input class="form-control search-field" type="search" name="search" id="search-field" style="padding-left: 6px;padding-right: 6px;"></div>
+              </form><a class="btn btn-light action-button" role="button" href="login.html" data-bs-hover-animate="pulse">LOGIN</a></div>
+      </div>
+  </nav>
+
+{% block content %} {% endblock %}
+
+
+<footer class="page-footer dark">
+    <div class="footer-copyright">
+        <p>© 2018 Bla Bla Box | All rights reserved.</p>
+    </div>
+</footer>
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.js"></script>
+<script src="assets/js/smoothproducts.min.js"></script>
+<script src="assets/js/theme.js"></script>
+<script src="assets/js/bs-animation.js"></script>
+</body>
+</html>

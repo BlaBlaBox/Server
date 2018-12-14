@@ -1,0 +1,66 @@
+{% extends "layouts/layout.html" %}
+
+{% block title %}Admin Page{% endblock %}
+{% block content %}
+
+
+<main class="page landing-page" style="background-color: #212529;">
+        <div class="container" style="margin-top: 16px;">
+            <div class="col-auto text-center align-self-center" style="margin-bottom: 7px;">
+                <p style="color: #e50914;margin: 0px;">Add a New Movie</p>
+            </div>
+            <div class="form-group"><label style="color: #e50914;">IMDB ID:&nbsp;</label><input type="text" required=""><input type="file" accept="video/*" required="" style="margin-left: 18px;color: #e50914;"></div><button class="btn btn-primary" type="button" style="background-color: #e50914;">Add</button></div>
+        <hr
+            class="new1">
+            <div class="container">
+                <p class="text-center" style="color: #e50914;margin: 0px;">Update or Remove a Movie</p>
+                <div>
+                    <div class="form-group" style="overflow-y: scroll">
+                        <div class="form-check"><input class="form-check-input" type="radio" name="movie_selection" checked="" id="formCheck-2" style="background-color: #e50914;"><label class="form-check-label" for="movies" style="color: #ffffff;">Venom</label></div>
+                        <div class="form-check"><input class="form-check-input" type="radio" name="movie_selection" id="formCheck-2" style="background-color: #e50914;"><label class="form-check-label" for="movies" style="color: #ffffff;">Bohemian Rhapsody</label></div>
+                        <div class="form-check"><input class="form-check-input" type="radio" name="movie_selection" id="formCheck-2" style="background-color: #e50914;"><label class="form-check-label" for="movies" style="color: #ffffff;">Boy Erased</label></div>
+                        <div class="form-check"><input class="form-check-input" type="radio" name="movie_selection" id="formCheck-2" style="background-color: #e50914;"><label class="form-check-label" for="movies" style="color: #ffffff;">Venom</label></div>
+                        <div class="form-check"><input class="form-check-input" type="radio" name="movie_selection" id="formCheck-2" style="background-color: #e50914;"><label class="form-check-label" for="movies" style="color: #ffffff;">Bohemian Rhapsody</label></div>
+                        <div class="form-check"><input class="form-check-input" type="radio" name="movie_selection" id="formCheck-2" style="background-color: #e50914;"><label class="form-check-label" for="movies" style="color: #ffffff;">Boy Erased</label></div>
+                        <div class="form-check"><input class="form-check-input" type="radio" name="movie_selection" id="formCheck-2" style="background-color: #e50914;"><label class="form-check-label" for="movies" style="color: #ffffff;">Venom</label></div>
+                    </div><button class="btn btn-primary" type="button" style="margin-top: 16px;background-color: #e50914;margin-left: 0px;">Update</button><button class="btn btn-primary" type="button" style="margin-left: 16px;margin-top: 16px;background-color: #e50914;">Remove</button></div>
+            </div>
+            <hr class="new1">
+            <div class="container">
+                <p class="text-center" style="color: #e50914;margin: 0px;">Suspend an Account</p>
+                <div>
+                    <div class="form-group" style="overflow-y: scroll">
+                        <div class="form-check"><input class="form-check-input" type="radio" name="user_selection" checked="" id="formCheck-2" style="background-color: #e50914;"><label class="form-check-label" for="movies" style="color: #ffffff;">johndoe@gmail.com</label></div>
+                        <div
+                            class="form-check"><input class="form-check-input" type="radio" name="user_selection" checked="" id="formCheck-2" style="background-color: #e50914;"><label class="form-check-label" for="movies" style="color: #ffffff;">johndoe@gmail.com</label></div>
+                    <div
+                        class="form-check"><input class="form-check-input" type="radio" name="user_selection" checked="" id="formCheck-2" style="background-color: #e50914;"><label class="form-check-label" for="movies" style="color: #ffffff;">johndoe@gmail.com</label></div>
+                <div
+                    class="form-check"><input class="form-check-input" type="radio" name="user_selection" checked="" id="formCheck-2" style="background-color: #e50914;"><label class="form-check-label" for="movies" style="color: #ffffff;">johndoe@gmail.com</label></div>
+            <div
+                class="form-check"><input class="form-check-input" type="radio" name="user_selection" checked="" id="formCheck-2" style="background-color: #e50914;"><label class="form-check-label" for="movies" style="color: #ffffff;">johndoe@gmail.com</label></div>
+                </div><button class="btn btn-primary" type="button" style="margin-top: 16px;background-color: #e50914;margin-left: 0px;">Suspend</button></div>
+                </div>
+                <hr class="new1">
+                <div class="container">
+                    <p class="text-center" style="color: #e50914;margin: 0px;">Publish an Announcement</p>
+                    <div>
+                        <div class="form-group" style="margin-top: 8px;">
+                            <div class="row" style="margin-top: 8px;">
+                                <div class="col"><label style="color: #e50914;">Announcement title:&nbsp;</label><input type="text" required="" style="margin-left: 8px;width: 480px;"></div>
+                            </div>
+                            <div class="row" style="margin-top: 8px;">
+                                <div class="col"><label style="color: #e50914;">Announcement text:&nbsp;</label><input class="form-control-lg" type="text" required="" maxlength="5000" style="margin-left: 8px;width: 480px;height: 120px;"></div>
+                            </div>
+                            <div class="row" style="margin-top: 8px;">
+                                <div class="col"><label style="color: #e50914;">Image link :&nbsp;</label><input type="text" required="" style="width: 480px;margin-left: 82px;"></div>
+                            </div>
+                            <div class="row" style="margin-top: 8px;">
+                                <div class="col"><label style="color: #e50914;">Movie link:&nbsp;</label><input type="text" required="" style="margin-left: 90px;width: 480px;"></div>
+                            </div><button class="btn btn-primary" type="button" style="background-color: #e50914;margin-top: 8px;">Publish</button></div>
+                    </div>
+                </div>
+    </main>
+
+
+{% endblock %}

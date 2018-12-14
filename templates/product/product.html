@@ -1,0 +1,124 @@
+{% extends "layouts/layout.html" %}
+
+{% block title %}Home Page{% endblock %}
+{% block content %}
+
+<main class="page product-page">
+        <section class="clean-block clean-product dark">
+            <div class="container">
+                <div class="block-heading">
+                    <h2 class="text-info">Product Page</h2>
+                    <p style="color: rgb(0,0,0);">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quam urna, dignissim nec auctor in, mattis vitae leo.</p>
+                </div>
+                <div class="block-content">
+                    <div class="product-info">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="gallery">
+                                    <div class="sp-wrap"><a href="assets/img/movies/venom.jpg"><img class="img-fluid d-block mx-auto" src="assets/img/movies/venom.jpg"></a></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info">
+                                    <h3>Lorem Ipsum</h3>
+                                    <div class="rating"><img src="assets/img/star.svg"><img src="assets/img/star.svg"><img src="assets/img/star.svg"><img src="assets/img/star-half-empty.svg"><img src="assets/img/star-empty.svg"></div>
+                                    <div class="price">
+                                        <h3>$300.00</h3>
+                                    </div><a class="btn btn-primary" role="button" href="cart.html" style="background-color: #E50914;"><i class="icon-basket"></i>Rent</a><a class="btn btn-primary" role="button" href="cart.html" style="margin-left: 12px;background-color: #E50914;"><i class="icon-basket"></i>Buy</a>
+                                    <a
+                                        class="btn btn-primary" role="button" href="cart.html" style="margin-left: 12px;background-color: #E50914;">Add Wishlisht</a>
+                                        <div class="summary">
+                                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec augue nunc, pretium at augue at, convallis pellentesque ipsum. Vestibulum diam risus, sagittis at fringilla at, pulvinar vel risus. Vestibulum dignissim
+                                                eu nulla eu imperdiet. Morbi mollis tellus a nunc vestibulum consequat. Quisque tristique elit et nibh dapibus sodales. Nam sollicitudin a urna sed iaculis.</p>
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <div>
+                            <ul class="nav nav-tabs" id="myTab">
+                                <li class="nav-item"><a class="nav-link" role="tab" data-toggle="tab" href="#description" id="description-tab">Description</a></li>
+                                <li class="nav-item"><a class="nav-link active" role="tab" data-toggle="tab" href="#actors" id="specifications-tabs">Cast</a></li>
+                            </ul>
+                            <div class="tab-content" id="myTabContent">
+                                <div class="tab-pane fade show description" role="tabpanel" id="description">
+                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quam urna, dignissim nec auctor in, mattis vitae leo. Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing
+                                        elit. Nunc quam urna, dignissim nec auctor in, mattis vitae leo. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <figure class="figure"><img class="img-fluid figure-img" src="assets/img/movies/venom.jpg"></figure>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <h4>Lorem Ipsum</h4>
+                                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quam urna, dignissim nec auctor in, mattis vitae leo. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane active fade show specifications" role="tabpanel" id="actors">
+                                    <div class="table-responsive table-bordered">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td class="stat">Ruben Fleisher</td>
+                                                    <td>Director</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="stat">Tom Hardy</td>
+                                                    <td>Venom</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="stat">Michelle Williams</td>
+                                                    <td>Anne Weying</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="stat">Reid Scott</td>
+                                                    <td>Dr. Dan Lewis</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clean-related-items">
+                        <h3>Related Products</h3>
+                        <div class="items">
+                            <div class="row justify-content-center">
+                                <div class="col-sm-6 col-lg-4">
+                                    <div class="clean-related-item">
+                                        <div class="image"><a href="#"><img class="img-fluid d-block mx-auto" src="assets/img/movies/private_war.jpg"></a></div>
+                                        <div class="related-name"><a href="#">Lorem Ipsum dolor</a>
+                                            <div class="rating"><img src="assets/img/star.svg"><img src="assets/img/star.svg"><img src="assets/img/star.svg"><img src="assets/img/star-half-empty.svg"><img src="assets/img/star-empty.svg"></div>
+                                            <h4>$300</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-lg-4">
+                                    <div class="clean-related-item">
+                                        <div class="image"><a href="#"><img class="img-fluid d-block mx-auto" src="assets/img/movies/bohemian_rapsody.jpg"></a></div>
+                                        <div class="related-name"><a href="#">Lorem Ipsum dolor</a>
+                                            <div class="rating"><img src="assets/img/star.svg"><img src="assets/img/star.svg"><img src="assets/img/star.svg"><img src="assets/img/star-half-empty.svg"><img src="assets/img/star-empty.svg"></div>
+                                            <h4>$300</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-lg-4">
+                                    <div class="clean-related-item">
+                                        <div class="image"><a href="#"><img class="img-fluid d-block mx-auto" src="assets/img/movies/boy_erased.jpg"></a></div>
+                                        <div class="related-name"><a href="#">Lorem Ipsum dolor</a>
+                                            <div class="rating"><img src="assets/img/star.svg"><img src="assets/img/star.svg"><img src="assets/img/star.svg"><img src="assets/img/star-half-empty.svg"><img src="assets/img/star-empty.svg"></div>
+                                            <h4>$300</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+{% endblock %}

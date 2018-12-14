@@ -1,0 +1,27 @@
+{% extends "layouts/layout.html" %}
+
+{% block title %}Registration{% endblock %}
+{% block content %}
+
+
+<main class="page registration-page">
+        <section class="clean-block clean-form dark">
+            <div class="container">
+                <div class="block-heading">
+                    <h2 class="text-info">Registration</h2>
+                    <p style="color: rgb(5,5,5);">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quam urna, dignissim nec auctor in, mattis vitae leo.</p>
+                </div>
+                <form>
+                    <div class="form-group"><label for="name">Name</label><input class="form-control item" type="text" id="name"></div>
+                    <div class="form-group"><label for="password">Password</label><input class="form-control item" type="password" id="password"></div>
+                    <div class="form-group"><label for="email">Email</label><input class="form-control item" type="text" id="email"></div><button class="btn btn-primary btn-block" type="button">Sign Up</button>
+                    <div class="form-row justify-content-center align-items-center">
+                        <div class="col-auto align-self-center"><a href="login.html" class="already" style="color: rgb(84,98,113);font-size: 14px;">Already have an account? Login</a></div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+
+{% endblock %}
