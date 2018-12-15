@@ -91,7 +91,18 @@ def register():
 
 @site.route('/login', methods=['GET', 'POST'])
 def login():
-    return render_template('login/index.html')
+	if request.method == 'GET':
+		# If user is authenticated direct it to homepage
+		#else
+		return render_template('login/index.html')
+	else:
+		form = request.form
+		print(form["email"])
+		print(form["password"])
+		# Send to the microservice.
+		# Get the result
+		return render_template('login/index.html') 
+    
 
 
 @site.route('/watch', methods=['GET', 'POST'])

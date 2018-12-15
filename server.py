@@ -2,8 +2,14 @@ import os
 
 from flask import Flask, session
 from flask import Blueprint, render_template
+from flask_login import LoginManager
 from handlers import site
+from classes.UserAccount import UserAccount
      
+login_manager = LoginManager()
+
+
+
 
 def create_app():
     app = Flask(__name__)
