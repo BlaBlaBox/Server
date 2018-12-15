@@ -4,6 +4,8 @@ from flask import request, flash, session, abort
 
 from classes.Announcement import *
 from classes.Movie import *
+from classes.Actor import *
+from classes.Cast import *
 
 import requests
 site = Blueprint('site', __name__)
@@ -24,11 +26,17 @@ def home():
 @site.route('/movies', methods=['GET', 'POST'])
 def movies_index():
     # TODO: Change this with database
+    my_cast = Cast([Actor('Ali', 'Veli', 'Venom'),
+                    Actor('Hasan', 'Mahmut', 'Second Vecom')])
     movie_list = [
-        Movie("Ali", 4, 100, "static/img/movies/bohemian_rapsody.jpg"),
-        Movie("Hasan", 3.5, 200, "static/img/movies/bohemian_rapsody.jpg"),
-        Movie("Ayse", 2, 300, "static/img/movies/bohemian_rapsody.jpg"),
-        Movie("Gizem", 5, 500, "static/img/movies/bohemian_rapsody.jpg")
+        Movie('Ali', 'Lorem ipsum', 4, 100,
+              'Mahmut Dogan', my_cast, "static/img/movies/bohemian_rapsody.jpg"),
+        Movie('Ali', 'Lorem ipsum', 4, 100,
+              'Mahmut Dogan', my_cast, "static/img/movies/bohemian_rapsody.jpg"),
+        Movie('Ali', 'Lorem ipsum', 4, 100,
+              'Mahmut Dogan', my_cast, "static/img/movies/bohemian_rapsody.jpg"),
+        Movie('Ali', 'Lorem ipsum', 4, 100,
+              'Mahmut Dogan', my_cast, "static/img/movies/bohemian_rapsody.jpg")
     ]
 
     return render_template('movie/index.html', movie_list=movie_list)
@@ -36,8 +44,13 @@ def movies_index():
 
 @site.route('/movies/<int:movie_id>', methods=['GET', 'POST'])
 def movies_show(movie_id):
-    print(movie_id)
-    return render_template('movie/show.html')
+    # TODO: Change this with db by using movie_id
+    my_cast = Cast([Actor('Ali', 'Veli', 'Venom'),
+                    Actor('Hasan', 'Mahmut', 'Second Vecom')])
+    movie = Movie('Ali', 'Lorem ipsum', 4, 100,
+                  'Mahmut Dogan', my_cast, "static/img/movies/bohemian_rapsody.jpg")
+
+    return render_template('movie/show.html', movie=movie)
 
 
 @site.route('/movies/<int:movie_id>/update', methods=['GET', 'POST'])

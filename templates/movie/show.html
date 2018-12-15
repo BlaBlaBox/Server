@@ -15,21 +15,31 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="gallery">
-                                    <div class="sp-wrap"><a href="assets/img/movies/venom.jpg"><img class="img-fluid d-block mx-auto" src="assets/img/movies/venom.jpg"></a></div>
+                                    <div class="sp-wrap"><a href="assets/img/movies/venom.jpg"><img class="img-fluid d-block mx-auto" src={{movie.pic}}></a></div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="info">
-                                    <h3>Lorem Ipsum</h3>
-                                    <div class="rating"><img src="assets/img/star.svg"><img src="assets/img/star.svg"><img src="assets/img/star.svg"><img src="assets/img/star-half-empty.svg"><img src="assets/img/star-empty.svg"></div>
+                                    <h3>{{movie.title}}</h3>
+                                    <div class="rating">
+                                        {% if movie.star != movie.int_star() %}
+                                            <img src="static/img/star-half-empty.svg">
+                                            {% for movie in range(5-movie.int_star() - 1) %}
+                                                <img src="static/img/star-empty.svg">
+                                            {% endfor %}
+                                        {% else %}
+                                            {% for movie in range(5-movie.int_star()) %}
+                                                <img src="static/img/star-empty.svg">
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
                                     <div class="price">
-                                        <h3>$300.00</h3>
+                                        <h3>${{movie.price}}</h3>
                                     </div><a class="btn btn-primary" role="button" href="cart.html" style="background-color: #E50914;"><i class="icon-basket"></i>Rent</a><a class="btn btn-primary" role="button" href="cart.html" style="margin-left: 12px;background-color: #E50914;"><i class="icon-basket"></i>Buy</a>
                                     <a
                                         class="btn btn-primary" role="button" href="cart.html" style="margin-left: 12px;background-color: #E50914;">Add Wishlisht</a>
                                         <div class="summary">
-                                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec augue nunc, pretium at augue at, convallis pellentesque ipsum. Vestibulum diam risus, sagittis at fringilla at, pulvinar vel risus. Vestibulum dignissim
-                                                eu nulla eu imperdiet. Morbi mollis tellus a nunc vestibulum consequat. Quisque tristique elit et nibh dapibus sodales. Nam sollicitudin a urna sed iaculis.</p>
+                                            <p>{{movie.desc}}</p>
                                         </div>
                                 </div>
                             </div>
@@ -38,7 +48,7 @@
                     <div class="product-info">
                         <div>
                             <ul class="nav nav-tabs" id="myTab">
-                                <li class="nav-item"><a class="nav-link" role="tab" data-toggle="tab" href="#description" id="description-tab">Description</a></li>
+                                <!-- <li class="nav-item"><a class="nav-link" role="tab" data-toggle="tab" href="#description" id="description-tab">Description</a></li> -->
                                 <li class="nav-item"><a class="nav-link active" role="tab" data-toggle="tab" href="#actors" id="specifications-tabs">Cast</a></li>
                             </ul>
                             <div class="tab-content" id="myTabContent">
@@ -60,21 +70,16 @@
                                         <table class="table table-bordered">
                                             <tbody>
                                                 <tr>
-                                                    <td class="stat">Ruben Fleisher</td>
+                                                    <td class="stat">{{movie.director}}</td>
                                                     <td>Director</td>
                                                 </tr>
+                                                {% for cast in movie.cast.actor_list%}
                                                 <tr>
-                                                    <td class="stat">Tom Hardy</td>
-                                                    <td>Venom</td>
+                                                    <td class="stat">{{cast.name}} {{cast.surname}}</td>
+                                                    <td>{{cast.character_in_movie}}</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="stat">Michelle Williams</td>
-                                                    <td>Anne Weying</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="stat">Reid Scott</td>
-                                                    <td>Dr. Dan Lewis</td>
-                                                </tr>
+                                                {% endfor %}
                                             </tbody>
                                         </table>
                                     </div>
