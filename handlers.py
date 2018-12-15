@@ -1,17 +1,37 @@
-from flask import Blueprint, render_template , redirect , current_app,url_for
-from flask import request,flash,session,abort
+from flask import Blueprint, render_template, redirect, current_app, url_for
+from flask import request, flash, session, abort
+
+
+from classes.Announcement import *
+from classes.Movie import *
 
 import requests
 site = Blueprint('site', __name__)
 
+
 @site.route('/', methods=['GET', 'POST'])
 def home():
-    return render_template('home/index.html')
+    # TODO: Change this with database
+    announcement_list = [
+        Announcement('Ali', 'Hasan'),
+        Announcement('Mahmut', 'Hasan'),
+        Announcement('Xdeeeee', 'Hasan')
+    ]
+
+    return render_template('home/index.html', announcement_list=announcement_list)
 
 
 @site.route('/movies', methods=['GET', 'POST'])
 def movies_index():
-    return render_template('movie/index.html')
+    # TODO: Change this with database
+    movie_list = [
+        Movie("Ali", 4, 100, "static/img/movies/bohemian_rapsody.jpg"),
+        Movie("Hasan", 3.5, 200, "static/img/movies/bohemian_rapsody.jpg"),
+        Movie("Ayse", 2, 300, "static/img/movies/bohemian_rapsody.jpg"),
+        Movie("Gizem", 5, 500, "static/img/movies/bohemian_rapsody.jpg")
+    ]
+
+    return render_template('movie/index.html', movie_list=movie_list)
 
 
 @site.route('/movies/<int:movie_id>', methods=['GET', 'POST'])
@@ -60,10 +80,10 @@ def register():
 def login():
     return render_template('login/index.html')
 
+
 @site.route('/watch', methods=['GET', 'POST'])
 def wath():
     return render_template('watch/index.html')
-
 
 
 # @site.route('/movie')
