@@ -82,7 +82,23 @@ def library():
 
 @site.route('/payment', methods=['GET', 'POST'])
 def payment():
-    return render_template('payment/index.html')
+	if request.method == 'GET':
+		return render_template('payment/index.html',form=None)
+	else:
+		form = request.form
+		form.data = {}
+		form.errors = {}
+		print(form["cardholder"])
+		print(form["expiration-date"])
+		print(form["cardnumber"])
+		print(form["cvc"])
+		# TODO: Send them to the microservice
+		# If return is not 200 
+		# then form.errors['notcompleted'] = 'We couldn\'t registred you as user please change your info or try again.'
+		form.errors['notcompleted']	= 'Payment is not accepted. Please try different card.'
+		return render_template('payment/index.html',form=form)
+		# ELSE If successfull go to the home page with login user
+		return redirect(url_for('site.movies'))
 
 
 @site.route('/register', methods=['GET', 'POST'])
@@ -131,12 +147,21 @@ def login():
 
 
 @site.route('/watch', methods=['GET', 'POST'])
-def wath():
+def watch():
     return render_template('watch/index.html')
 
 @site.route('/search',methods=['GET','POST'])
 def search():
 	return redirect(url_for('site.movies_index'))
+
+@site.route('/publish',methods=['POST'])
+def publish():
+	return redirect(url_for('site.admin'))
+
+
+@site.route('/movies/add',methods=['POST'])
+def add_movie():
+	return redirect(url_for('site.admin'))
 
 # @site.route('/movie')
 # def movie():

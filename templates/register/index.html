@@ -11,25 +11,25 @@
                 <p style="color: rgb(5,5,5);">You are one step closer to access incredible movies in  the BlaBlaBox. Please fill the form below.</p>
             </div>
             {% if form != None %}
-                <div class="alert alert-danger">
-                             {{ form.errors['notcompleted'] }}
-                </div>
-            {% endif %}
-            <form class="form" role="form" method="POST" action="{{url_for('site.register')}}">
-                <div class="form-group"><label for="name">Name</label><input class="form-control item" type="text" name="name" id="name" required autofocus></div>
-                <div class="form-group"><label for="surname">Surname</label><input class="form-control" type="text" name="surname" id="surname"required></div>
-                <div class="form-group"><label for="username">Username</label><input class="form-control" type="text" name="username" id="username" required minlength="5" placeholder="Only small letters and numbers with min. 5 length" pattern="[a-z0-9]+"></div>
-                <div class="form-group"><label for="email">Email</label><input class="form-control item" type="email" name="email" id="email" required></div>
-                <div class="form-group"><label for="password">Password</label><input class="form-control item" type="password" name="password" id="password" required minlength="6"></div>
-                <div class="form-group"><label for="birthdate">Birthdate</label><input class="form-control" type="date" name="birthdate" id="birthdate" min="1900-01-01" max="2010-01-01" required></div>
-                <div class="form-group"><label for="gender">Gender</label><select class="form-control" name="gender" id="gender"><option value="F" selected="">Female</option><option value="M">Male</option><option value="O">Other</option></select></div><button  type="submit " class="btn btn-primary btn-block"
-                    type="button">Sign Up</button>
-                <div class="form-row justify-content-center align-items-center">
-                    <div class="col-auto align-self-center"><a href="{{url_for('site.login')}}" class="already" style="color: rgb(84,98,113);font-size: 14px;">Already have an account? Login</a></div>
-                </div>
-            </form>
-        </div>
-    </section>
+            <div class="alert alert-danger">
+               {{ form.errors['notcompleted'] }}
+           </div>
+           {% endif %}
+           <form class="form" role="form" method="POST" action="{{url_for('site.register')}}">
+            <div class="form-group"><label for="name">Name</label><input class="form-control item" type="text" name="name" id="name" required autofocus></div>
+            <div class="form-group"><label for="surname">Surname</label><input class="form-control" type="text" name="surname" id="surname"required></div>
+            <div class="form-group"><label for="username">Username</label><input class="form-control" type="text" name="username" id="username" required minlength="5" placeholder="Only small letters and numbers with min. 5 length" pattern="[a-z0-9]+"></div>
+            <div class="form-group"><label for="email">Email</label><input class="form-control item" type="email" name="email" id="email" required></div>
+            <div class="form-group"><label for="password">Password</label><input class="form-control item" type="password" name="password" id="password" required minlength="6"></div>
+            <div class="form-group"><label for="birthdate">Birthdate</label><input class="form-control" type="date" name="birthdate" id="birthdate" min="1900-01-01" max="2010-01-01" required></div>
+            <div class="form-group"><label for="gender">Gender</label><select class="form-control" name="gender" id="gender"><option value="F" selected="">Female</option><option value="M">Male</option><option value="O">Other</option></select></div>
+            <button  type="submit" class="btn btn-primary btn-block">Sign Up</button>
+            <div class="form-row justify-content-center align-items-center">
+                <div class="col-auto align-self-center"><a href="{{url_for('site.login')}}" class="already" style="color: rgb(84,98,113);font-size: 14px;">Already have an account? Login</a></div>
+            </div>
+        </form>
+    </div>
+</section>
 </main>
 
 
