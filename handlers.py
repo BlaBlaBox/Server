@@ -13,19 +13,20 @@ site = Blueprint('site', __name__)
 
 @site.route('/', methods=['GET', 'POST'])
 def home():
-    # TODO: Change this with database
-    announcement_list = [
-        Announcement('Ali', 'Hasan'),
-        Announcement('Mahmut', 'Hasan'),
-        Announcement('Xdeeeee', 'Hasan')
-    ]
+	if request.method == 'GET':
+	    # TODO: Change this with microservice
+	    announcement_list = [
+	        Announcement('Ali', 'Hasan'),
+	        Announcement('Mahmut', 'Hasan'),
+	        Announcement('Xdeeeee', 'Hasan')
+	    ]
 
-    return render_template('home/index.html', announcement_list=announcement_list)
+	    return render_template('home/index.html', announcement_list=announcement_list)
 
 
 @site.route('/movies', methods=['GET', 'POST'])
 def movies_index():
-    # TODO: Change this with database
+    # TODO: Change this with microservice
     my_cast = Cast([Actor('Ali', 'Veli', 'Venom'),
                     Actor('Hasan', 'Mahmut', 'Second Vecom')])
     movie_list = [
@@ -59,7 +60,7 @@ def movies_update(movie_id):
     return render_template('movie/update.html')
 
 
-@site.route('/aboutus', methods=['GET', 'POST'])
+@site.route('/aboutus', methods=['GET'])
 def aboutus():
     return render_template('aboutus/index.html')
 
@@ -86,7 +87,26 @@ def payment():
 
 @site.route('/register', methods=['GET', 'POST'])
 def register():
-    return render_template('register/index.html')
+	if request.method == 'GET':
+		return render_template('register/index.html',form=None)
+	else:
+		form = request.form
+		form.data = {}
+		form.errors = {}
+		print(form["name"])
+		print(form["surname"])
+		print(form["username"])
+		print(form["email"])
+		print(form["password"])
+		print(form["birthdate"])
+		print(form["gender"])	
+		# TODO: Send them to the microservice
+		# If return is not 200 
+		# then form.errors['notcompleted'] = 'We couldn\'t registred you as user please change your info or try again.'
+		form.errors['notcompleted']	= 'We couldn\'t registred you as user please change your info or try again.'
+		return render_template('register/index.html',form=form)
+		# ELSE If successfull go to the home page with login user
+		return redirect(url_for('site.home'))
 
 
 @site.route('/login', methods=['GET', 'POST'])
@@ -94,14 +114,19 @@ def login():
 	if request.method == 'GET':
 		# If user is authenticated direct it to homepage
 		#else
-		return render_template('login/index.html')
+		return render_template('login/index.html',form=None)
 	else:
 		form = request.form
 		print(form["email"])
 		print(form["password"])
 		# Send to the microservice.
 		# Get the result
-		return render_template('login/index.html') 
+		# IF it is not 200 
+		form.errors['notcompleted']	= 'Login is not successful. Please try again.'
+		return render_template('register/index.html',form=form)
+		
+		# ELSE If successfull go to the home page with login user
+		return redirect(url_for('site.home'))
     
 
 
@@ -109,6 +134,9 @@ def login():
 def wath():
     return render_template('watch/index.html')
 
+@site.route('/search',methods=['GET','POST'])
+def search()
+	return redirect(url_for('site.movies_index'))
 
 # @site.route('/movie')
 # def movie():
