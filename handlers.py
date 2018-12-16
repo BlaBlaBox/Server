@@ -14,7 +14,7 @@ site = Blueprint('site', __name__)
 @site.route('/', methods=['GET', 'POST'])
 def home():
 	if request.method == 'GET':
-	    # TODO: Change this with microservice
+	    # TODO: Change this with microservice:
 	    announcement_list = [
 	        Announcement('Ali', 'Hasan'),
 	        Announcement('Mahmut', 'Hasan'),
@@ -135,7 +135,7 @@ def wath():
     return render_template('watch/index.html')
 
 @site.route('/search',methods=['GET','POST'])
-def search()
+def search():
 	return redirect(url_for('site.movies_index'))
 
 # @site.route('/movie')
