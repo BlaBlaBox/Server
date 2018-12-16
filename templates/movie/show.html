@@ -22,22 +22,26 @@
                                 <div class="info">
                                     <h3>{{movie.title}}</h3>
                                     <div class="rating">
+                                    {% for k in range(movie.int_star() ) %}
+                                            <img src="/static/img/star.svg">
+                                    {% endfor %}
                                         {% if movie.star != movie.int_star() %}
-                                            <img src="static/img/star-half-empty.svg">
-                                            {% for movie in range(5-movie.int_star() - 1) %}
-                                                <img src="static/img/star-empty.svg">
+                                            <img src="/static/img/star-half-empty.svg">
+                                            {% for i in range(5-movie.int_star() - 1) %}
+                                                <img src="/static/img/star-empty.svg">
                                             {% endfor %}
                                         {% else %}
-                                            {% for movie in range(5-movie.int_star()) %}
-                                                <img src="static/img/star-empty.svg">
+                                            {% for i in range(5-movie.int_star()) %}
+                                                <img src="/static/img/star-empty.svg">
                                             {% endfor %}
                                         {% endif %}
+                                    
                                     </div>
                                     <div class="price">
                                         <h3>${{movie.price}}</h3>
-                                    </div><a class="btn btn-primary" role="button" href="cart.html" style="background-color: #E50914;"><i class="icon-basket"></i>Rent</a><a class="btn btn-primary" role="button" href="cart.html" style="margin-left: 12px;background-color: #E50914;"><i class="icon-basket"></i>Buy</a>
-                                    <a
-                                        class="btn btn-primary" role="button" href="cart.html" style="margin-left: 12px;background-color: #E50914;">Add Wishlisht</a>
+                                    </div>
+                                    <a class="btn btn-primary" role="button" onclick="addProduct()" style="background-color: #E50914;"><i class="icon-basket"></i>Rent</a>
+                                    <a class="btn btn-primary" role="button" onclick="addProduct()" style="margin-left: 12px;background-color: #E50914;"><i class="icon-basket"></i>Buy</a>
                                         <div class="summary">
                                             <p>{{movie.desc}}</p>
                                         </div>
@@ -125,5 +129,12 @@
             </div>
         </section>
     </main>
+
+
+<script>
+function addProduct() {
+    alert("You have successfully added item to your cart!")
+}
+</script>
 
 {% endblock %}

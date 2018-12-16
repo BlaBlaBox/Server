@@ -30,14 +30,14 @@ def movies_index():
     my_cast = Cast([Actor('Ali', 'Veli', 'Venom'),
                     Actor('Hasan', 'Mahmut', 'Second Vecom')])
     movie_list = [
-        Movie('Ali', 'Lorem ipsum', 4, 100,
-              'Mahmut Dogan', my_cast, "static/img/movies/bohemian_rapsody.jpg"),
-        Movie('Ali', 'Lorem ipsum', 4, 100,
-              'Mahmut Dogan', my_cast, "static/img/movies/bohemian_rapsody.jpg"),
-        Movie('Ali', 'Lorem ipsum', 4, 100,
-              'Mahmut Dogan', my_cast, "static/img/movies/bohemian_rapsody.jpg"),
-        Movie('Ali', 'Lorem ipsum', 4, 100,
-              'Mahmut Dogan', my_cast, "static/img/movies/bohemian_rapsody.jpg")
+        Movie('Ali', 'Lorem ipsum', 1, 100,
+              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg"),
+        Movie('Ali', 'Lorem ipsum', 3, 100,
+              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg"),
+        Movie('Ali', 'Lorem ipsum', 5, 100,
+              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg"),
+        Movie('Ali', 'Lorem ipsum', 2.5, 100,
+              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg")
     ]
 
     return render_template('movie/index.html', movie_list=movie_list)
@@ -49,7 +49,7 @@ def movies_show(movie_id):
     my_cast = Cast([Actor('Ali', 'Veli', 'Venom'),
                     Actor('Hasan', 'Mahmut', 'Second Vecom')])
     movie = Movie('Ali', 'Lorem ipsum', 4, 100,
-                  'Mahmut Dogan', my_cast, "static/img/movies/bohemian_rapsody.jpg")
+                  'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg")
 
     return render_template('movie/show.html', movie=movie)
 
@@ -89,7 +89,8 @@ def payment():
 		form.data = {}
 		form.errors = {}
 		print(form["cardholder"])
-		print(form["expiration-date"])
+		print(form["expiration-month"])
+		print(form["expiration-year"])		
 		print(form["cardnumber"])
 		print(form["cvc"])
 		# TODO: Send them to the microservice

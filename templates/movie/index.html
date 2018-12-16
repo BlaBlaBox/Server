@@ -81,24 +81,24 @@
                             {% for mov in movie_list %}
                                 <div class="col-12 col-md-6 col-lg-4">
                                     <div class="clean-product-item">
-                                        <div class="image"><a href="product-page.html"><img class="img-fluid d-block mx-auto" src={{mov.pic}}></a></div>
-                                        <div class="product-name"><a href="#">{{mov.title}}</a></div>
+                                        <div class="image"><a href="{{url_for('site.movies_show',movie_id=2)}}"><img class="img-fluid d-block mx-auto" src={{mov.pic}}></a></div>
+                                        <div class="product-name"><a href="{{url_for('site.movies_show',movie_id = 2)}}">{{mov.title}}</a></div>
                                         <div class="about">
                                             <div class="rating">
-                                            {% for mov in range(mov.int_star()) %}
-                                                <img src="static/img/star.svg">
-                                            {% endfor %}
-                                            {% if mov.star != mov.int_star() %}
-                                                <img src="static/img/star-half-empty.svg">
-                                                {% for mov in range(5-mov.int_star() - 1) %}
-                                                    <img src="static/img/star-empty.svg">
-                                                {% endfor %}
-                                            {% else %}
-                                                {% for mov in range(5-mov.int_star()) %}
-                                                    <img src="static/img/star-empty.svg">
-                                                {% endfor %}
-                                            {% endif %}
 
+                                                {% for k in range(mov.int_star() ) %}
+                                                        <img src="/static/img/star.svg">
+                                                {% endfor %}
+                                                    {% if mov.star != mov.int_star() %}
+                                                        <img src="/static/img/star-half-empty.svg">
+                                                        {% for i in range(5-mov.int_star() - 1) %}
+                                                            <img src="/static/img/star-empty.svg">
+                                                        {% endfor %}
+                                                    {% else %}
+                                                        {% for i in range(5-mov.int_star()) %}
+                                                            <img src="/static/img/star-empty.svg">
+                                                        {% endfor %}
+                                                    {% endif %}
                                             </div>
                                             <div class="price">
                                                 <h3>${{mov.price}}</h3>
