@@ -129,8 +129,16 @@ def admin():
     # MOVIE_LIST should got changed with classes. Becuase update form should be filled with default values
     movie_list = [('ali', 1), ('ata', 2), ('bak', 3),
                   ('irem', 4), ('okula', 5), ('git', 6)]
-    user_list = [('ayse', 1), ('fatma', 2), ('hayriye', 3),
-                 ('haydi', 4), ('cifte', 5), ('telliye', 6)]
+    print('asdfasdf')
+
+    # Find all users
+    user_list = []
+    rv = requests.get(AUTH + "user/get")
+    rv_json = json.loads(rv.content)
+    for user_json in rv_json['users']:
+        user_list.append(
+            (user_json['username'] + ' / ' + user_json['email'], user_json['user_id']))
+
     return render_template('admin/index.html', user_list=user_list, movie_list=movie_list)
 
 
@@ -205,6 +213,7 @@ def payment():
 
         endpoint = 'http://dfcf2d0f.ngrok.io/payment/pay/10'
         rv = requests.post(endpoint, json=pay_json)
+
         if rv != 200:
             form.errors['notcompleted'] = 'Payment is not accepted. Please try different card.'
             return render_template('payment/index.html', form=form)
@@ -271,10 +280,14 @@ def login():
             'uname_mail': form["email"],
             'password': form["password"]
         }
-        response = requests.post(AUTH + "user/login", json=login_json)
-        res_json = response.json()
+        rv = requests.post(AUTH + "user/login", json=login_json)
+        res_json = json.loads(rv.content)
 
-        if response.status_code != 200:
+        print(json.loads(rv.content))
+        print(rv.status_code)
+        print(rv.content)
+
+        if rv.status_code != 200:
             form.errors['notcompleted'] = 'Login is not successful. Please try again.'
             return render_template('register/index.html', form=form)
         else:
