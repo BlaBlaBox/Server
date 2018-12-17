@@ -39,13 +39,13 @@ def movies_index():
     my_cast = Cast([Actor('Ali', 'Veli', 'Venom'),
                     Actor('Hasan', 'Mahmut', 'Second Vecom')])
     movie_list = [
-        Movie('Ali', 'Lorem ipsum', 1, 100,
+        Movie(0, 'Ali', 'Lorem ipsum', 1, 100,
               'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg"),
-        Movie('Ali', 'Lorem ipsum', 3, 100,
+        Movie(2, 'Ali', 'Lorem ipsum', 3, 100,
               'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg"),
-        Movie('Ali', 'Lorem ipsum', 5, 100,
+        Movie(3, 'Ali', 'Lorem ipsum', 5, 100,
               'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg"),
-        Movie('Ali', 'Lorem ipsum', 2.5, 100,
+        Movie(4, 'Ali', 'Lorem ipsum', 2.5, 100,
               'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg")
     ]
 
@@ -57,7 +57,7 @@ def movies_show(movie_id):
     # TODO: Change this with db by using movie_id
     my_cast = Cast([Actor('Ali', 'Veli', 'Venom'),
                     Actor('Hasan', 'Mahmut', 'Second Vecom')])
-    movie = Movie('Ali', 'Lorem ipsum', 4, 100,
+    movie = Movie(1, 'Ali', 'Lorem ipsum', 4, 100,
                   'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg")
 
     return render_template('movie/show.html', movie=movie)
@@ -67,6 +67,16 @@ def movies_show(movie_id):
 def movies_update(movie_id):
     print(movie_id)
     return render_template('movie/update.html')
+
+
+@site.route('/movie/<int:movie_id>/watch', methods=['GET', 'POST'])
+def movie_watch(movie_id):
+    # Get current movie infos
+    my_cast = Cast([Actor('Ali', 'Veli', 'Venom'),
+                    Actor('Hasan', 'Mahmut', 'Second Vecom')])
+    movie = Movie(1, 'Ali', 'Lorem ipsum', 4, 100,
+                  'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg")
+    return render_template('watch/index.html', movie=movie)
 
 
 @site.route('/movies/update', methods=['POST'])
@@ -111,7 +121,23 @@ def cart():
 
 @site.route('/library', methods=['GET', 'POST'])
 def library():
-    return render_template('library/index.html')
+    # TODO: Send current user ID to the db and get their movie library
+
+    # TODO: Change this with microservice with the search params
+    my_cast = Cast([Actor('Ali', 'Veli', 'Venom'),
+                    Actor('Hasan', 'Mahmut', 'Second Vecom')])
+    movie_list = [
+        Movie(0, 'Ali', 'Lorem ipsum', 1, 100,
+              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg"),
+        Movie(1, 'Ali', 'Lorem ipsum', 3, 100,
+              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg"),
+        Movie(2, 'Ali', 'Lorem ipsum', 5, 100,
+              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg"),
+        Movie(3, 'Ali', 'Lorem ipsum', 2.5, 100,
+              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg")
+    ]
+
+    return render_template('library/index.html', movie_list=movie_list)
 
 
 @site.route('/announcement/add', methods=['POST'])
@@ -189,11 +215,6 @@ def login():
 
         # ELSE If successfull go to the home page with login user
         return redirect(url_for('site.home'))
-
-
-@site.route('/watch', methods=['GET', 'POST'])
-def watch():
-    return render_template('watch/index.html')
 
 
 @site.route('/search', methods=['GET', 'POST'])

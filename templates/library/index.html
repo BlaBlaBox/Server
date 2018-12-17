@@ -7,41 +7,23 @@
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-auto align-self-center" style="max-width: 100%;max-height: 100%;padding: 0px;">
+                    {% if movie_list %}
+                        {% for mov in movie_list %}
                         <div data-bs-hover-animate="pulse" class="row clearmargin clearpadding row-image-txt" style="margin-top: 16px;width: 640px;height: 346px;">
-                            <div class="col-xs-12 col-sm-6 col-md-6 clearmargin clearpadding col-sm-push-6" style="background-image: url(&quot;/static/img/movies/venom.jpg&quot;);background-size: cover;height: 400px;background-position: center;max-height: 100%;">
+                            <div class="col-xs-12 col-sm-6 col-md-6 clearmargin clearpadding col-sm-push-6" style="background-image: url(&quot;{{mov.pic}}&quot;);background-size: cover;height: 400px;background-position: center;max-height: 100%;">
                                 <div></div>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-6 col-sm-pull-6" style="padding: 10px;max-height: 100%;margin-bottom: 8px;">
-                                <h1 style="margin-bottom: 0px;">Venom</h1>
+                                <h1 style="margin-bottom: 0px;">{{mov.title}}</h1>
                                 <hr style="margin-bottom: 8px;margin-top: 8px;">
-                                <p style="font-size: 12px;margin-bottom: 8px;"><strong>Journalist Eddie Brock is trying to take down Carlton Drake, the notorious and brilliant founder of the Life Foundation. While investigating one of Drake's experiments, Eddie's body merges with the alien Venom -- leaving him with superhuman strength and power. Twisted, dark and fueled by rage, Venom&nbsp;tries to control the new and dangerous abilities that Eddie finds so intoxicating.</strong><br></p>
+                                <p style="font-size: 12px;margin-bottom: 8px;"><strong>{{mov.desc}}</strong><br></p>
                                 <div
-                                    style="text-align: center;max-height: 80%;max-width: 80%;"><a class="btn btn-light btn-lg" role="button" href="watch.html" style="background-color: #e50914;color: rgb(255,255,255);max-width: 90%;max-height: 90%;min-width: 1px;min-height: 1px;padding: 2px;font-size: 18px;">Watch Now</a></div>
+                                    style="text-align: center;max-height: 80%;max-width: 80%;"><a class="btn btn-light btn-lg" role="button" href="{{url_for('site.movie_watch', movie_id=mov.id)}}" style="background-color: #e50914;color: rgb(255,255,255);max-width: 90%;max-height: 90%;min-width: 1px;min-height: 1px;padding: 2px;font-size: 18px;">Watch Now</a></div>
+                            </div>
                         </div>
-                    </div>
-                    <div data-bs-hover-animate="pulse" class="row clearmargin clearpadding row-image-txt" style="margin-top: 16px;width: 640px;height: 346px;">
-                        <div class="col-xs-12 col-sm-6 col-md-6 clearmargin clearpadding col-sm-push-6" style="background-image: url(&quot;/static/img/movies/bohemian_rapsody.jpg&quot;);background-size: cover;height: 400px;background-position: center;max-height: 100%;">
-                            <div></div>
-                        </div>
-                        <div class="col-xs-12 col-sm-6 col-md-6 col-sm-pull-6" style="padding: 10px;max-height: 100&amp;;">
-                            <h1 style="margin-bottom: 0px;">Bohemian Rhapsody<br></h1>
-                            <hr style="margin-bottom: 8px;margin-top: 8px;">
-                            <p class="flex-grow-0 flex-shrink-1 flex-fill justify-content-end flex-wrap" style="font-size: 12px;margin-bottom: 8px;"><strong>Bohemian Rhapsody is a foot-stomping celebration of Queen, their music and their extraordinary lead singer Freddie Mercury. Freddie defied stereotypes and shattered convention to become one of the most beloved entertainers on the planet. The film traces the meteoric rise of the band through their iconic songs and revolutionary sound. &nbsp;</strong><br></p>
-                            <div
-                                style="text-align: center;max-height: 80%;max-width: 80%;"><a class="btn btn-light btn-lg" role="button" href="watch.html" style="background-color: #e50914;color: rgb(255,255,255);max-width: 90%;max-height: 90%;min-width: 1px;min-height: 1px;padding: 2px;font-size: 18px;">Watch Now</a></div>
-                    </div>
-                </div>
-                <div data-bs-hover-animate="pulse" class="row clearmargin clearpadding row-image-txt" style="margin-top: 16px;width: 640px;height: 346px;">
-                    <div class="col-xs-12 col-sm-6 col-md-6 clearmargin clearpadding col-sm-push-6" style="background-image: url(&quot;/static/img/movies/boy_erased.jpg&quot;);background-size: cover;height: 400px;background-position: center;max-height: 100%;">
-                        <div></div>
-                    </div>
-                    <div class="col-xs-12 col-sm-6 col-md-6 col-sm-pull-6" style="padding: 10px;max-height: 90%;">
-                        <h1 style="margin-bottom: 0px;">Boy Erased<br></h1>
-                        <hr style="margin-bottom: 8px;margin-top: 8px;">
-                        <p style="font-size: 12px;margin-bottom: 8px;"><strong>Jared Eamons, the son of a small-town Baptist pastor, must overcome the fallout after being outed as gay to his parents. His father and mother struggle to reconcile their love for their son with their beliefs. Fearing a loss of family, friends and community, Jared is pressured into attending a conversion therapy program. While there, Jared comes into conflict with its leader and begins his journey to finding his own voice and accepting his true self.</strong><br></p>
-                        <div
-                            style="text-align: center;max-height: 80%;max-width: 80%;"><a class="btn btn-light btn-lg" role="button" href="watch.html" style="background-color: #e50914;color: rgb(255,255,255);max-width: 90%;max-height: 90%;min-width: 1px;min-height: 1px;padding: 2px;font-size: 18px;">Watch Now</a></div>
-                </div>
+                        {% endfor %}
+                    {% endif %}
+
             </div>
             </div>
             </div>
