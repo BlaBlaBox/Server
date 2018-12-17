@@ -11,8 +11,12 @@ lm = LoginManager()
 
 @lm.user_loader
 def load_user(user_id):
-    id_obj = { 'id' : user_id }
-    return requests.post(AUTH+"get/user/"+user_id, json=id_obj)
+    id_obj = {'id' : user_id}
+    response = requests.post(AUTH+"get/user/"+user_id, json=id_obj)
+    res_val = response.content
+    if res_val["result"] == 'Success':
+        return res_val["user"]
+    return None
 
 
 @lm.unauthorized_handler
