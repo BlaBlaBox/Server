@@ -69,6 +69,25 @@ def movies_update(movie_id):
     return render_template('movie/update.html')
 
 
+@site.route('/movies/update', methods=['POST'])
+def movies_update_router():
+    print(request.form)
+    return redirect(url_for('site.movies_update', movie_id=request.form['movie_selection']))
+
+
+@site.route('/movies/delete', methods=['POST'])
+def movies_delete():
+    # TODO: Delete movie
+    print(request.form['movie_selection'])
+
+    return redirect(url_for('site.admin'))
+
+
+@site.route('/movies/add', methods=['POST'])
+def add_movie():
+    return redirect(url_for('site.admin'))
+
+
 @site.route('/aboutus', methods=['GET'])
 def aboutus():
     return render_template('aboutus/index.html')
@@ -76,7 +95,13 @@ def aboutus():
 
 @site.route('/admin', methods=['GET', 'POST'])
 def admin():
-    return render_template('admin/index.html')
+    # TODO: Change this with microservice and change this tuple list anout movie
+    # MOVIE_LIST should got changed with classes. Becuase update form should be filled with default values
+    movie_list = [('ali', 1), ('ata', 2), ('bak', 3),
+                  ('irem', 4), ('okula', 5), ('git', 6)]
+    user_list = [('ayse', 1), ('fatma', 2), ('hayriye', 3),
+                 ('haydi', 4), ('cifte', 5), ('telliye', 6)]
+    return render_template('admin/index.html', user_list=user_list, movie_list=movie_list)
 
 
 @site.route('/cart', methods=['GET', 'POST'])
@@ -176,15 +201,13 @@ def search():
     return redirect(url_for('site.movies_index'))
 
 
-@site.route('/publish', methods=['POST'])
-def publish():
+@site.route('/user/suspend', methods=['POST'])
+def suspend_user():
+    # TODO: Send this user_id to the db
+    user_id = request.form.get('user_selection')
+    print(user_id)
+
     return redirect(url_for('site.admin'))
-
-
-@site.route('/movies/add', methods=['POST'])
-def add_movie():
-    return redirect(url_for('site.admin'))
-
 # @site.route('/movie')
 # def movie():
 #     # a = requests.get('http://053e8eac.ngrok.io/payment/create').content
