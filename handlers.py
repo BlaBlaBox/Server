@@ -13,6 +13,8 @@ from classes.User import UserObj
 
 from api_links import AUTH, MOVIE, PAYMENT
 
+from server import lm
+
 
 site = Blueprint('site', __name__)
 
@@ -294,3 +296,6 @@ def suspend_user():
 #     # a = requests.get('http://053e8eac.ngrok.io/payment/create').content
 #     # print('asdf')
 #     return requests.get('http://053e8eac.ngrok.io/payment/create').content
+
+
+lm.login_view = login
