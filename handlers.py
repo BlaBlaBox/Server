@@ -101,6 +101,20 @@ def movies_delete():
 
 @site.route('/movies/add', methods=['POST'])
 def add_movie():
+    r_form = request.form
+    r_file = request.files
+
+    r_form.data = {}
+    r_form.errors = {}
+    print('file', r_file)
+    print('form', r_form)
+
+    # print(form["cardholder"])
+    # print(form["expiration-month"])
+    # print(form["expiration-year"])
+    # print(form["cardnumber"])
+    # print(form["cvc"])
+
     return redirect(url_for('site.admin'))
 
 
@@ -201,7 +215,10 @@ def payment():
 @site.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'GET':
-        return render_template('register/index.html', form=None)
+        if current_user:
+            return redirect(url_for('site.home'))
+        else:
+            return render_template('login/index.html', form=None)
     else:
         form = request.form
         form.data = {}
@@ -234,9 +251,10 @@ def register():
 @site.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
-        # If user is authenticated direct it to homepage
-        # else
-        return render_template('login/index.html', form=None)
+        if current_user:
+            return redirect(url_for('site.home'))
+        else:
+            return render_template('login/index.html', form=None)
     else:
         form = request.form
         form.data = {}
@@ -253,6 +271,7 @@ def login():
             form.errors['notcompleted'] = 'Login is not successful. Please try again.'
             return render_template('register/index.html', form=form)
         else:
+            # print(json.loads(res_json.content))
             user = UserObj(**res_json["user"])
             login_user(user, form["remember_me"])
             return redirect(url_for('site.home'))
