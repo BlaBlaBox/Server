@@ -247,7 +247,8 @@ def login():
             'password': form["password"]
         }
         rv = requests.post(AUTH + "user/login", json=login_json)
-
+        print(rv.content["user"])
+        print(**rv.content["user"])
         if rv.status_code != 200:
             form.errors['notcompleted'] = 'Login is not successful. Please try again.'
             return render_template('register/index.html', form=form)
