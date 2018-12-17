@@ -3,9 +3,8 @@ from flask import Flask, abort
 #from flask import Blueprint
 from flask_login import LoginManager
 from handlers import site
-from api_links import AUTH, MOVIE, PAYMENT
+from api_links import AUTH
 # from classes.UserAccount import UserAccount
-
 
 
 lm = LoginManager()
@@ -22,11 +21,12 @@ def unauthorized_access():
 
 
 def create_app():
-    app = Flask(__name__)
-    app.register_blueprint(site)
-    return app
+    app2 = Flask(__name__)
+    app2.register_blueprint(site)
+    return app2
 
+
+app = create_app()
 
 if __name__ == '__main__':
-    app = create_app()
     app.run(host='0.0.0.0', port=5000, debug=True)
