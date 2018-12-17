@@ -1,9 +1,8 @@
+import json
 import requests
 from flask import Blueprint, render_template, redirect, current_app, url_for
 from flask import request, flash, session, abort
 from flask_login import LoginManager, login_user, login_required, current_user, logout_user
-
-import json
 
 from classes.Announcement import *
 from classes.Movie import *

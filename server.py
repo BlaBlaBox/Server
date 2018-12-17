@@ -4,6 +4,7 @@ from flask import Flask, abort
 from flask_login import LoginManager
 from handlers import site
 from api_links import AUTH
+from classes.User import UserObj
 # from classes.UserAccount import UserAccount
 
 
@@ -16,7 +17,7 @@ def load_user(user_id):
     response = requests.post(AUTH+"get/user/"+user_id, json=id_obj)
     res_val = response.content
     if res_val["result"] == 'Success':
-        return res_val["user"]
+        return UserObj(**res_val["user"])
     return None
 
 
