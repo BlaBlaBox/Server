@@ -215,7 +215,7 @@ def payment():
 @site.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'GET':
-        if current_user:
+        if current_user.is_authenticated:
             return redirect(url_for('site.home'))
         else:
             return render_template('login/index.html', form=None)
@@ -248,10 +248,17 @@ def register():
             return redirect(url_for('site.home'))
 
 
+@site.route('/logout', methods=['GET'])
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('site.home'))
+
+
 @site.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
-        if current_user:
+        if current_user.is_authenticated:
             return redirect(url_for('site.home'))
         else:
             return render_template('login/index.html', form=None)
@@ -273,7 +280,7 @@ def login():
         else:
             # print(json.loads(res_json.content))
             user = UserObj(**res_json["user"])
-            login_user(user, form["remember_me"])
+            login_user(user)
             return redirect(url_for('site.home'))
 
 
