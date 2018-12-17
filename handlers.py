@@ -89,6 +89,17 @@ def library():
     return render_template('library/index.html')
 
 
+@site.route('/announcement/add', methods=['POST'])
+def add_announcement():
+    # TODO: Send these to db
+    form = request.form
+    print(form['title'])
+    print(form['text'])
+    print(form['image'])
+    print(form['movie'])
+    return redirect(url_for('site.admin'))
+
+
 @site.route('/payment', methods=['GET', 'POST'])
 def payment():
     if request.method == 'GET':

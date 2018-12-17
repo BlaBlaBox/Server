@@ -93,24 +93,26 @@
                 </div><button class="btn btn-primary" type="button" style="margin-top: 16px;background-color: #e50914;margin-left: 0px;">Suspend</button></div>
             </div>
             <hr class="new1">
-            <div class="container">
-                <p class="text-center" style="color: #e50914;margin: 0px;">Publish an Announcement</p>
-                <div>
-                    <div class="form-group" style="margin-top: 8px;">
-                        <div class="row" style="margin-top: 8px;">
-                            <div class="col"><label style="color: #e50914;">Announcement title:&nbsp;</label><input type="text" required="" style="margin-left: 8px;width: 480px;"></div>
+            <form class="form" role="form" method="post" action="{{url_for('site.add_announcement')}}">
+                <div class="container">
+                    <p class="text-center" style="color: #e50914;margin: 0px;">Publish an Announcement</p>
+                    <div>
+                        <div class="form-group" style="margin-top: 8px;">
+                            <div class="row" style="margin-top: 8px;">
+                                <div class="col"><label style="color: #e50914;">Announcement title:&nbsp;</label>                                <input class="form-control" type="text" name="title" required="" placeholder="Announcement title" id="form_name" data-error="Wrong id"></div>
+                            </div>
+                            <div class="row" style="margin-top: 8px;">
+                                <div class="col"><label style="color: #e50914;">Announcement text:&nbsp;</label><input class="form-control" type="text" name="text" required="" placeholder="Announcement text" id="form_name" data-error="Wrong id"></div>
+                            </div>
+                            <div class="row" style="margin-top: 8px;">
+                                <div class="col"><label style="color: #e50914;">Image link :&nbsp;</label><input class="form-control" type="text" name="image" required="" placeholder="Announcement image link" id="form_name" data-error="Wrong id"></div>
+                            </div>
+                            <div class="row" style="margin-top: 8px;">
+                                <div class="col"><label style="color: #e50914;">Movie link:&nbsp;</label><input class="form-control" type="text" name="movie" required="" placeholder="Announcement movie link" id="form_name" data-error="Wrong id"></div>
+                            </div><button class="btn btn-primary" type="submit" style="background-color: #e50914;margin-top: 8px;">Publish</button></div>
                         </div>
-                        <div class="row" style="margin-top: 8px;">
-                            <div class="col"><label style="color: #e50914;">Announcement text:&nbsp;</label><input class="form-control-lg" type="text" required="" maxlength="5000" style="margin-left: 8px;width: 480px;height: 120px;"></div>
-                        </div>
-                        <div class="row" style="margin-top: 8px;">
-                            <div class="col"><label style="color: #e50914;">Image link :&nbsp;</label><input type="text" required="" style="width: 480px;margin-left: 82px;"></div>
-                        </div>
-                        <div class="row" style="margin-top: 8px;">
-                            <div class="col"><label style="color: #e50914;">Movie link:&nbsp;</label><input type="text" required="" style="margin-left: 90px;width: 480px;"></div>
-                        </div><button class="btn btn-primary" type="button" style="background-color: #e50914;margin-top: 8px;">Publish</button></div>
                     </div>
-                </div>
+                </form>
             </main>
 </body>
 
