@@ -13,8 +13,7 @@ lm = LoginManager()
 
 @lm.user_loader
 def load_user(user_id):
-    id_obj = {'id': user_id}
-    response = requests.post(AUTH+"get/user/"+user_id, json=id_obj)
+    response = requests.get(AUTH+"user/get/"+user_id)
     res_val = response.json()
     if res_val["result"] == 'Success':
         return UserObj(**res_val["user"])
@@ -30,6 +29,7 @@ def create_app():
     app2 = Flask(__name__)
     app2.config.from_object("settings")
     app2.register_blueprint(site)
+    lm.init_app(app2)
     return app2
 
 
