@@ -1,8 +1,10 @@
 import json
 import requests
+import os
 from flask import Blueprint, render_template, redirect, current_app, url_for
 from flask import request, flash, session, abort
 from flask_login import LoginManager, login_user, login_required, current_user, logout_user
+from werkzeug.utils import secure_filename
 
 from classes.Announcement import *
 from classes.Movie import *
@@ -12,6 +14,8 @@ from classes.CartElement import *
 from classes.User import UserObj
 
 from api_links import AUTH, MOVIE, PAYMENT
+
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','mp4','x-m4v'])
 
 
 site = Blueprint('site', __name__)
@@ -99,8 +103,38 @@ def movies_delete():
     return redirect(url_for('site.admin'))
 
 
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 @site.route('/movies/add', methods=['POST'])
 def add_movie():
+    image = request.files["image"]
+    video = request.files["video"]
+    imdb_id = request.form['imdb_id']
+    purchase_price = request.form['purchase']
+    rent_price = request.form['rent']
+    image_path = ""
+    video_path = ""
+
+    if image and allowed_file(image.filename):
+            filename = secure_filename(image.filename)
+            imagepath = "/img/movies/"
+            imagepath = imagepath + filename
+            absolute_path = os.path.abspath("./"+current_app.config['UPLOAD_FOLDER']+imagepath)
+            image.save(absolute_path)
+            image_path = absolute_path
+    
+    if video and allowed_file(video.filename):
+            filename = secure_filename(video.filename)
+            imagepath = "/vid/movies/"
+            imagepath = imagepath + filename
+            absolute_path = os.path.abspath("./"+current_app.config['UPLOAD_FOLDER']+imagepath)
+            video.save(absolute_path)
+            video_path = absolute_path
+    
+    
+    ## TODO create movie send to the microservice to add
     return redirect(url_for('site.admin'))
 
 
@@ -114,12 +148,11 @@ def admin():
     # TODO: Change this with microservice and change this tuple list anout movie
     # MOVIE_LIST should got changed with classes. Becuase update form should be filled with default values
     movie_list = [('ali', 1), ('ata', 2), ('bak', 3),
-                  ('irem', 4), ('okula', 5), ('git', 6)]
+              ('irem', 4), ('okula', 5), ('git', 6)]
     user_list = [('ayse', 1), ('fatma', 2), ('hayriye', 3),
-                 ('haydi', 4), ('cifte', 5), ('telliye', 6)]
+             ('haydi', 4), ('cifte', 5), ('telliye', 6),('telliye', 6),('telliye', 6),('telliye', 6),('telliye', 6),('telliye', 6),('telliye', 6),('telliye', 6),('telliye', 6),('telliye', 6),('telliye', 6),('telliye', 6)]
     return render_template('admin/index.html', user_list=user_list, movie_list=movie_list)
-
-
+ 
 @site.route('/cart', methods=['GET', 'POST'])
 def cart():
     # TODO: Connect these with db
