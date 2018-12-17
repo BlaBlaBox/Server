@@ -6,7 +6,10 @@ from classes.Announcement import *
 from classes.Movie import *
 from classes.Actor import *
 from classes.Cast import *
+from classes.CartElement import *
+
 from api_links import AUTH, MOVIE, PAYMENT
+
 
 site = Blueprint('site', __name__)
 
@@ -116,7 +119,17 @@ def admin():
 
 @site.route('/cart', methods=['GET', 'POST'])
 def cart():
-    return render_template('cart/index.html')
+    # TODO: Connect these with db
+    my_cast = Cast([Actor('Ali', 'Veli', 'Venom'),
+                    Actor('Hasan', 'Mahmut', 'Second Vecom')])
+
+    movie = Movie(1, 'Ali', 'Lorem ipsum', 4, 100,
+                  'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg")
+    movie_two = Movie(1, 'Ali', 'Lorem ipsum', 4, 100,
+                      'Mahmut HASANANANANANAN', my_cast, "/static/img/movies/bohemian_rapsody.jpg")
+    cart_list = [CartElemnt(movie, -1, 100), CartElemnt(movie_two, 7, 500),
+                 CartElemnt(movie_two, 7, 400), CartElemnt(movie_two, 7, 300)]
+    return render_template('cart/index.html', cart_list=cart_list)
 
 
 @site.route('/library', methods=['GET', 'POST'])
@@ -207,7 +220,8 @@ def login():
         form = request.form
         print(form["email"])
         print(form["password"])
-        login_json = { 'uname_mail' : form["email"], 'password' : form["password"] }
+        login_json = {'uname_mail': form["email"],
+                      'password': form["password"]}
         requests.post(AUTH+"user/login", json=login_json)
         # Send to the microservice.
         # Get the result

@@ -14,49 +14,65 @@
                     <div class="row no-gutters">
                         <div class="col-md-12 col-lg-8">
                             <div class="items">
-                                <div class="product">
-                                    <div class="row justify-content-center align-items-center">
-                                        <div class="col-md-3">
-                                            <div class="product-image"><img class="img-fluid d-block mx-auto image" src="/static/img/movies/venom.jpg"></div>
+                                {% if cart_list %}
+                                    {% for element in cart_list %}
+                                        <div class="product">
+                                            <div class="row justify-content-center align-items-center">
+                                                <div class="col-md-3">
+                                                    <div class="product-image"><img class="img-fluid d-block mx-auto image" src={{element.movie.pic}}></div>
+                                                </div>
+                                                <div class="col-md-5 product-info"><a href="#" class="product-name">{{element.movie.title}}</a></div>
+                                                    <div class="col-6 col-md-2 quantity">
+                                                <label class="d-none d-md-block" for="quantity">Duration(Weeks)</label>
+                                                {% if element.duration != -1 %}
+                                                    <input type="number" value="{{element.duration}}"  class="form-control quantity-input js-number" max=14 min=7 step=7>
+                                                {% else %}
+                                                    LIFE TIME
+                                                {% endif %}
+                                                </div>
+                                                <div class="col-6 col-md-2 price" ><span class="js-price" data-base="{{element.price}}">${{element.price}}</span></div>
+                                            </div>
                                         </div>
-                                        <div class="col-md-5 product-info"><a href="#" class="product-name">Lorem Ipsum dolor</a></div>
-                                        <div class="col-6 col-md-2 quantity"><label class="d-none d-md-block" for="quantity">Quantity</label><input type="number" value="1" id="number" class="form-control quantity-input"></div>
-                                        <div class="col-6 col-md-2 price"><span>$100</span></div>
-                                    </div>
-                                </div>
-                                <div class="product">
-                                    <div class="row justify-content-center align-items-center">
-                                        <div class="col-md-3">
-                                            <div class="product-image"><img class="img-fluid d-block mx-auto image" src="/static/img/movies/bohemian_rapsody.jpg"></div>
-                                        </div>
-                                        <div class="col-md-5 product-info"><a href="#" class="product-name">Lorem Ipsum dolor</a></div>
-                                        <div class="col-6 col-md-2 quantity"><label class="d-none d-md-block" for="quantity">Quantity</label><input type="number" value="1" id="number" class="form-control quantity-input"></div>
-                                        <div class="col-6 col-md-2 price"><span>$20</span></div>
-                                    </div>
-                                </div>
-                                <div class="product">
-                                    <div class="row justify-content-center align-items-center">
-                                        <div class="col-md-3">
-                                            <div class="product-image"><img class="img-fluid d-block mx-auto image" src="/static/img/movies/private_war.jpg"></div>
-                                        </div>
-                                        <div class="col-md-5 product-info"><a href="#" class="product-name">Lorem Ipsum dolor</a></div>
-                                        <div class="col-6 col-md-2 quantity"><label class="d-none d-md-block" for="quantity">Quantity</label><input type="number" value="2" id="number" class="form-control quantity-input"></div>
-                                        <div class="col-6 col-md-2 price"><span>$30</span></div>
-                                    </div>
-                                </div>
+                                    {% endfor %}
+                                {% endif %}
                             </div>
                         </div>
                         <div class="col-md-12 col-lg-4">
                             <div class="summary">
                                 <h3>Summary</h3>
-                                <h4><span class="text">Subtotal</span><span class="price">$180</span></h4>
-                                <h4><span class="text">Discount</span><span class="price">$0</span></h4>
-                                <h4><span class="text">Total</span><span class="price">$360</span></h4><a class="btn btn-primary btn-block btn-lg" role="button" href="{{url_for('site.payment')}}">Checkout</a></div>
+                                <p id="mirror"></p>
+                                <!-- <h4><span class="text">Subtotal</span><span class="price">$180</span></h4>
+                                <h4><span class="text">Discount</span><span class="price">$0</span></h4> -->
+                                <h4><span class="text">Total</span><span class="price" id="totalPrice">${{cart_list | sum(attribute='price')}}</span></h4><a class="btn btn-primary btn-block btn-lg" role="button" href="{{url_for('site.payment')}}">Checkout</a></div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
     </main>
+    <script>
+        Array.from(document.querySelectorAll(".js-number")).forEach(n => {
+        n.addEventListener("change", (el) => {
+          const num = parseInt(el.target.value);
+          const priceEl = el.target.parentElement.parentElement.querySelector(".js-price");
+          console.log(el.target.parentElement)
+          const oldPrice = parseInt(priceEl.innerText.substr(1));
+          const basePrice = parseInt(priceEl.dataset.base);
 
+          var changePrice = 0;
+          if(num == 7) {
+              priceEl.innerText = `$${basePrice}`;
+              changePrice = basePrice - oldPrice;
+          } else {
+              const newPrice = 1.5 * basePrice;
+              priceEl.innerText = `$${newPrice}`;
+              changePrice = newPrice- oldPrice;
+          }
+
+          const totalPriceEl = document.querySelector("#totalPrice");
+          const totalOldPrice = parseInt(totalPriceEl.innerText.substr(1));
+          totalPriceEl.innerText = `$${totalOldPrice  + changePrice}`;
+        });
+      });
+    </script>
 {% endblock %}
