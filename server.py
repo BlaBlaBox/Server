@@ -1,12 +1,24 @@
-import os
-
-from flask import Flask, session
-from flask import Blueprint, render_template
+import requests
+from flask import Flask, abort
+#from flask import Blueprint
 from flask_login import LoginManager
 from handlers import site
+from api_links import AUTH, MOVIE, PAYMENT
 # from classes.UserAccount import UserAccount
 
-login_manager = LoginManager()
+
+
+lm = LoginManager()
+
+@lm.user_loader
+def load_user(user_id):
+    id_obj = { 'id' : user_id }
+    return requests.post(AUTH+"get/user/"+user_id, json=id_obj)
+
+
+@lm.unauthorized_handler
+def unauthorized_access():
+    return abort(401)
 
 
 def create_app():

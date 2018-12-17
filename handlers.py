@@ -1,13 +1,13 @@
+import requests
 from flask import Blueprint, render_template, redirect, current_app, url_for
 from flask import request, flash, session, abort
-
 
 from classes.Announcement import *
 from classes.Movie import *
 from classes.Actor import *
 from classes.Cast import *
+from api_links import AUTH, MOVIE, PAYMENT
 
-import requests
 site = Blueprint('site', __name__)
 
 
@@ -207,6 +207,8 @@ def login():
         form = request.form
         print(form["email"])
         print(form["password"])
+        login_json = { 'uname_mail' : form["email"], 'password' : form["password"] }
+        requests.post(AUTH+"user/login", json=login_json)
         # Send to the microservice.
         # Get the result
         # IF it is not 200
