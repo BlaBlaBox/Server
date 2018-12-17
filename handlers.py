@@ -152,6 +152,7 @@ def admin():
     # TODO: Change this with microservice and change this tuple list anout movie
     # MOVIE_LIST should got changed with classes. Becuase update form should be filled with default values
     movie_list = [('ali', 1), ('ata', 2), ('bak', 3),
+                  ('irem', 4), ('okula', 5), ('git', 6)]
     # Find all users
     user_list = []
     rv = requests.get(AUTH + "user/get")
