@@ -9,6 +9,7 @@ from classes.Movie import *
 from classes.Actor import *
 from classes.Cast import *
 from classes.CartElement import *
+from classes.User import UserObj
 
 from api_links import AUTH, MOVIE, PAYMENT
 
@@ -38,7 +39,7 @@ def search_movie():
 def movies_index():
     # Take the search value parameter
     search_value = request.args.get('movie_name')
-    search_value = search_value if search_value != None else ''
+    search_value = search_value if search_value is not None else ''
 
     # TODO: Change this with microservice with the search params
     my_cast = Cast([Actor('Ali', 'Veli', 'Venom'),
@@ -251,6 +252,8 @@ def login():
             form.errors['notcompleted'] = 'Login is not successful. Please try again.'
             return render_template('register/index.html', form=form)
         else:
+            user = UserObj(**rv["user"])
+            login_user(user, form["remember_me"])
             return redirect(url_for('site.home'))
 
 
