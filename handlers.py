@@ -246,14 +246,16 @@ def login():
             'uname_mail': form["email"],
             'password': form["password"]
         }
-        rv = requests.post(AUTH + "user/login", json=login_json)
-        print(rv.content["user"])
-        print(**rv.content["user"])
-        if rv.status_code != 200:
+        response = requests.post(AUTH + "user/login", json=login_json)
+        res_json = response.json()
+        print(type(res_json))
+        print(res_json["user"])
+        print(**res_json["user"])
+        if response.status_code != 200:
             form.errors['notcompleted'] = 'Login is not successful. Please try again.'
             return render_template('register/index.html', form=form)
         else:
-            user = UserObj(**rv.content["user"])
+            user = UserObj(**res_json.content["user"])
             login_user(user, form["remember_me"])
             return redirect(url_for('site.home'))
 
