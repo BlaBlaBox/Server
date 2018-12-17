@@ -11,7 +11,7 @@ from classes.Cast import *
 from classes.CartElement import *
 from classes.User import UserObj
 
-from api_links import AUTH, MOVIE, PAYMENT
+from api_links import AUTH, MOVIE, PAYMENT, ANNCMT
 
 
 site = Blueprint('site', __name__)
@@ -20,12 +20,16 @@ site = Blueprint('site', __name__)
 @site.route('/', methods=['GET', 'POST'])
 def home():
     if request.method == 'GET':
-        # TODO: Change this with microservice:
-        announcement_list = [
-            Announcement('Ali', 'BOyle BOyle oldu'),
-            Announcement('Mahmut', 'Bak bu da var'),
-            Announcement('Xdeeeee', 'Hayde gidelum hayde hayde ')
-        ]
+
+        announcement_list = []
+        rv = requests.get(ANNCMT + "announcement/get")
+        print(rv)
+        rv_json = json.loads(rv.content)
+
+        print(rv_json)
+        Announcement
+        for ann_json in rv_json['announcement_list']:
+            announcement_list.append(Announcement(**ann_json))
 
         return render_template('home/index.html', announcement_list=announcement_list)
 
@@ -182,10 +186,30 @@ def library():
 def add_announcement():
     # TODO: Send these to db
     form = request.form
-    print(form['title'])
-    print(form['text'])
-    print(form['image'])
-    print(form['movie'])
+
+    ann_json = {
+        'title': form['title'],
+        'text': form['text'],
+        'image_link': form['image'],
+        'movie_link': form['movie']
+    }
+    print(ann_json)
+    rv = requests.post(ANNCMT + "announcement/create", json=ann_json)
+    # res_json = json.loads(rv.content)
+
+    #     if rv.status_code != 200:
+    #         form.errors['notcompleted'] = 'Login is not successful. Please try again.'
+    #         return render_template('register/index.html', form=form)
+    #     else:
+    #     #    print(json.loads(res_json.content))
+    #         user = UserObj(**res_json["user"])
+    #         login_user(user)
+    #         return redirect(url_for('site.home'))
+
+    # print()
+    # print()
+    # print(form['image'])
+    # print(form['movie'])
     return redirect(url_for('site.admin'))
 
 

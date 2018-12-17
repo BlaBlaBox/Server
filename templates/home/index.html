@@ -13,8 +13,9 @@
                         <div class="card">
                             <!-- <img class="card-img-top w-100 d-block"> -->
                             <div class="card-body">
-                                <h4 class="card-title">{{ann.title}}</h4>
-                                <p class="card-text">{{ann.content}}</p>
+                                <h4 class="card-title"><a href={{ann.movie_link}}>{{ann.title}}</a></h4>
+                                <p class="card-text">{{ann.text}}</p>
+                                <img src={{ann.image_link}} alt="Image" width="200" height="300"> <!--TODO: YOU MIGHT CONSIDER CHANGING THIS WIDTH AND HEIGHT-->
                             </div>
                         </div>
                     {% endfor %}
