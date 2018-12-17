@@ -13,7 +13,7 @@ from classes.Cast import *
 from classes.CartElement import *
 from classes.User import UserObj
 
-from api_links import AUTH, MOVIE, PAYMENT
+from api_links import AUTH, MOVIE, PAYMENT, ANNCMT
 
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','mp4','x-m4v'])
 
@@ -24,12 +24,16 @@ site = Blueprint('site', __name__)
 @site.route('/', methods=['GET', 'POST'])
 def home():
     if request.method == 'GET':
-        # TODO: Change this with microservice:
-        announcement_list = [
-            Announcement('Ali', 'BOyle BOyle oldu'),
-            Announcement('Mahmut', 'Bak bu da var'),
-            Announcement('Xdeeeee', 'Hayde gidelum hayde hayde ')
-        ]
+
+        announcement_list = []
+        rv = requests.get(ANNCMT + "announcement/get")
+        print(rv)
+        rv_json = json.loads(rv.content)
+
+        print(rv_json)
+        Announcement
+        for ann_json in rv_json['announcement_list']:
+            announcement_list.append(Announcement(**ann_json))
 
         return render_template('home/index.html', announcement_list=announcement_list)
 
@@ -109,8 +113,8 @@ def allowed_file(filename):
 
 @site.route('/movies/add', methods=['POST'])
 def add_movie():
-    image = request.files["image"]
-    video = request.files["video"]
+    image = request.files["image_path"]
+    video = request.files["video_path"]
     imdb_id = request.form['imdb_id']
     purchase_price = request.form['purchase']
     rent_price = request.form['rent']
@@ -148,9 +152,14 @@ def admin():
     # TODO: Change this with microservice and change this tuple list anout movie
     # MOVIE_LIST should got changed with classes. Becuase update form should be filled with default values
     movie_list = [('ali', 1), ('ata', 2), ('bak', 3),
-              ('irem', 4), ('okula', 5), ('git', 6)]
-    user_list = [('ayse', 1), ('fatma', 2), ('hayriye', 3),
-             ('haydi', 4), ('cifte', 5), ('telliye', 6),('telliye', 6),('telliye', 6),('telliye', 6),('telliye', 6),('telliye', 6),('telliye', 6),('telliye', 6),('telliye', 6),('telliye', 6),('telliye', 6),('telliye', 6)]
+    # Find all users
+    user_list = []
+    rv = requests.get(AUTH + "user/get")
+    rv_json = json.loads(rv.content)
+    for user_json in rv_json['users']:
+        user_list.append(
+            (user_json['username'] + ' / ' + user_json['email'], user_json['user_id']))
+
     return render_template('admin/index.html', user_list=user_list, movie_list=movie_list)
  
 @site.route('/cart', methods=['GET', 'POST'])
@@ -193,10 +202,30 @@ def library():
 def add_announcement():
     # TODO: Send these to db
     form = request.form
-    print(form['title'])
-    print(form['text'])
-    print(form['image'])
-    print(form['movie'])
+
+    ann_json = {
+        'title': form['title'],
+        'text': form['text'],
+        'image_link': form['image'],
+        'movie_link': form['movie']
+    }
+    print(ann_json)
+    rv = requests.post(ANNCMT + "announcement/create", json=ann_json)
+    # res_json = json.loads(rv.content)
+
+    #     if rv.status_code != 200:
+    #         form.errors['notcompleted'] = 'Login is not successful. Please try again.'
+    #         return render_template('register/index.html', form=form)
+    #     else:
+    #     #    print(json.loads(res_json.content))
+    #         user = UserObj(**res_json["user"])
+    #         login_user(user)
+    #         return redirect(url_for('site.home'))
+
+    # print()
+    # print()
+    # print(form['image'])
+    # print(form['movie'])
     return redirect(url_for('site.admin'))
 
 
@@ -224,6 +253,7 @@ def payment():
 
         endpoint = 'http://dfcf2d0f.ngrok.io/payment/pay/10'
         rv = requests.post(endpoint, json=pay_json)
+
         if rv != 200:
             form.errors['notcompleted'] = 'Payment is not accepted. Please try different card.'
             return render_template('payment/index.html', form=form)
@@ -234,7 +264,10 @@ def payment():
 @site.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'GET':
-        return render_template('register/index.html', form=None)
+        if current_user.is_authenticated:
+            return redirect(url_for('site.home'))
+        else:
+            return render_template('login/index.html', form=None)
     else:
         form = request.form
         form.data = {}
@@ -264,12 +297,20 @@ def register():
             return redirect(url_for('site.home'))
 
 
+@site.route('/logout', methods=['GET'])
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('site.home'))
+
+
 @site.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
-        # If user is authenticated direct it to homepage
-        # else
-        return render_template('login/index.html', form=None)
+        if current_user.is_authenticated:
+            return redirect(url_for('site.home'))
+        else:
+            return render_template('login/index.html', form=None)
     else:
         form = request.form
         form.data = {}
@@ -279,15 +320,20 @@ def login():
             'uname_mail': form["email"],
             'password': form["password"]
         }
-        response = requests.post(AUTH + "user/login", json=login_json)
-        res_json = response.json()
+        rv = requests.post(AUTH + "user/login", json=login_json)
+        res_json = json.loads(rv.content)
 
-        if response.status_code != 200:
+        print(json.loads(rv.content))
+        print(rv.status_code)
+        print(rv.content)
+
+        if rv.status_code != 200:
             form.errors['notcompleted'] = 'Login is not successful. Please try again.'
             return render_template('register/index.html', form=form)
         else:
+            # print(json.loads(res_json.content))
             user = UserObj(**res_json["user"])
-            login_user(user, form["remember_me"])
+            login_user(user)
             return redirect(url_for('site.home'))
 
 
