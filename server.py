@@ -28,6 +28,7 @@ def unauthorized_access():
 
 def create_app():
     app2 = Flask(__name__)
+    app.config.from_object("settings")
     app2.register_blueprint(site)
     return app2
 
