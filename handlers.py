@@ -1,6 +1,9 @@
 import requests
 from flask import Blueprint, render_template, redirect, current_app, url_for
 from flask import request, flash, session, abort
+from flask_login import LoginManager, login_user, login_required, current_user, logout_user
+
+import json
 
 from classes.Announcement import *
 from classes.Movie import *
@@ -177,13 +180,22 @@ def payment():
         print(form["expiration-year"])
         print(form["cardnumber"])
         print(form["cvc"])
-        # TODO: Send them to the microservice
-        # If return is not 200
-        # then form.errors['notcompleted'] = 'We couldn\'t registred you as user please change your info or try again.'
-        form.errors['notcompleted'] = 'Payment is not accepted. Please try different card.'
-        return render_template('payment/index.html', form=form)
-        # ELSE If successfull go to the home page with login user
-        return redirect(url_for('site.movies'))
+
+        pay_json = {
+            'holder': form["cardholder"],
+            'expiration': form["expiration-month"] + form["expiration-year"],
+            'number': form["cardnumber"],
+            'cvc': form['cvc'],
+            'cost': '200'  # TODO: Change this
+        }
+
+        endpoint = 'http://dfcf2d0f.ngrok.io/payment/pay/10'
+        rv = requests.post(endpoint, json=pay_json)
+        if rv != 200:
+            form.errors['notcompleted'] = 'Payment is not accepted. Please try different card.'
+            return render_template('payment/index.html', form=form)
+        else:
+            return redirect(url_for('site.movies'))
 
 
 @site.route('/register', methods=['GET', 'POST'])
@@ -194,20 +206,29 @@ def register():
         form = request.form
         form.data = {}
         form.errors = {}
-        print(form["name"])
-        print(form["surname"])
-        print(form["username"])
-        print(form["email"])
-        print(form["password"])
-        print(form["birthdate"])
-        print(form["gender"])
-        # TODO: Send them to the microservice
-        # If return is not 200
-        # then form.errors['notcompleted'] = 'We couldn\'t registred you as user please change your info or try again.'
-        form.errors['notcompleted'] = 'We couldn\'t registred you as user please change your info or try again.'
-        return render_template('register/index.html', form=form)
-        # ELSE If successfull go to the home page with login user
-        return redirect(url_for('site.home'))
+
+        register_json = {
+            'name': form["name"],
+            'surname': form["surname"],
+            'gender': form["gender"],
+            'dob': form['birthdate'],
+            'username': form['username'],
+            'password': form['password'],
+            'email': form['email']
+        }
+
+        print(register_json)
+        rv = requests.post(AUTH + "user/register", json=register_json)
+
+        print(json.loads(rv.content))
+        print(rv.status_code)
+        print(rv.content)
+
+        if rv.status_code != 200:
+            form.errors['notcompleted'] = 'We couldn\'t registred you as user please change your info or try again.'
+            return render_template('register/index.html', form=form)
+        else:
+            return redirect(url_for('site.home'))
 
 
 @site.route('/login', methods=['GET', 'POST'])
@@ -218,19 +239,20 @@ def login():
         return render_template('login/index.html', form=None)
     else:
         form = request.form
-        print(form["email"])
-        print(form["password"])
-        login_json = {'uname_mail': form["email"],
-                      'password': form["password"]}
-        requests.post(AUTH+"user/login", json=login_json)
-        # Send to the microservice.
-        # Get the result
-        # IF it is not 200
-        form.errors['notcompleted'] = 'Login is not successful. Please try again.'
-        return render_template('register/index.html', form=form)
+        form.data = {}
+        form.errors = {}
 
-        # ELSE If successfull go to the home page with login user
-        return redirect(url_for('site.home'))
+        login_json = {
+            'uname_mail': form["email"],
+            'password': form["password"]
+        }
+        rv = requests.post(AUTH + "user/login", json=login_json)
+
+        if rv.status_code != 200:
+            form.errors['notcompleted'] = 'Login is not successful. Please try again.'
+            return render_template('register/index.html', form=form)
+        else:
+            return redirect(url_for('site.home'))
 
 
 @site.route('/search', methods=['GET', 'POST'])
