@@ -252,7 +252,7 @@ def login():
             form.errors['notcompleted'] = 'Login is not successful. Please try again.'
             return render_template('register/index.html', form=form)
         else:
-            user = UserObj(**rv["user"])
+            user = UserObj(**rv.content["user"])
             login_user(user, form["remember_me"])
             return redirect(url_for('site.home'))
 
