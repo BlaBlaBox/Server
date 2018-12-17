@@ -16,8 +16,8 @@ def load_user(user_id):
     id_obj = {'id': user_id}
     response = requests.post(AUTH+"get/user/"+user_id, json=id_obj)
     res_val = response.content
-    if res_val.content["result"] == 'Success':
-        return UserObj(**res_val.content["user"])
+    if res_val["result"] == 'Success':
+        return UserObj(**res_val["user"])
     return None
 
 
