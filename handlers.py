@@ -244,6 +244,20 @@ def cart():
     for item in res_json['item_list']:
         # Send to the movie database get movies add them to cart element
         print(item)
+
+
+        actor_list = []
+        cast_rv = requests.get(MOVIE + "movie/get/" + str(item['movie_id']) + "/cast")
+        cast_json = cast_rv.json()
+
+        if cast_rv.status_code == 200:
+            for actor in cast_json['cast']:
+                actor_list.append(Actor(actor['name']))
+
+        print(actor_list)
+        movie = Movie(movie['movie_id'], movie['movie_title'], movie['information'],
+                        movie['rating']/2, movie['purchase_price'], movie['cover_url'], movie['video_url'], Cast(actor_list))
+        
     
     # TODO: Connect these with db
     my_cast = Cast([Actor('Brad Pitt'),
