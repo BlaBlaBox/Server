@@ -58,13 +58,13 @@ def movies_index():
     movie_list = []
     for movie in movies:
         my_cast = []
-        cast_rv = requests.get(MOVIE + "movie/get"+ movie['movie_id'] + "/cast")
+        cast_rv = requests.get(MOVIE + "movie/get/"+ str(movie['movie_id']) + "/cast")
         cast_json = cast_rv.json()
         print(cast_json)
 
         if cast_rv.status_code == 200:
             for actor in cast_json['cast']:
-                my_cast.append(Actor(actor.name))
+                my_cast.append(Actor(actor['name']))
 
         movies_list.append(Movie(movie['movie_id'],movie['movie_title'],movie['information'],movie['rating'],movie['purchase_price'],movie['cover_url'],movie['video_url'],my_cast))
 
