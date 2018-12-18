@@ -135,23 +135,11 @@ def allowed_file(filename):
 
 @site.route('/movies/add', methods=['POST'])
 def add_movie():
-    image = request.files["image_path"]
     video = request.files["video_path"]
     imdb_id = request.form['imdb_id']
     purchase_price = request.form['purchase']
     rent_price = request.form['rent']
-    image_path = ""
     video_path = ""
-
-    if image and allowed_file(image.filename):
-        filename = secure_filename(image.filename)
-        imagepath = "/img/movies/"
-        imagepath = current_app.config['UPLOAD_FOLDER'] + imagepath + filename
-        absolute_path = os.path.abspath("./" + imagepath)
-        image.save(absolute_path)
-        print("img_path=", imagepath)
-        print("absolute=", absolute_path)
-        image_path = imagepath
 
     if video and allowed_file(video.filename):
         filename = secure_filename(video.filename)
@@ -161,10 +149,10 @@ def add_movie():
         print("video_path=", video_path)
         print("absolute=", absolute_path)
         video.save(absolute_path)
-        video_path = videopath
 
-    print(video_path)
-    # TODO create movie send to the microservice to add
+    movie_json = {"movie_id":imdb_id,"rent":rent_price,"purchase":rent_price,"video_path":video_path}
+    rv = requests.post(MOVIE + "movie/add",json=movie_json)
+    
     return redirect(url_for('site.admin'))
 
 
