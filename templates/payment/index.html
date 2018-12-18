@@ -18,16 +18,14 @@
             <form class="form" role="form" method="POST" action="{{url_for('site.payment')}}" >
                 <div class="products">
                     <h3 class="title">Checkout</h3>
-                    <div class="item"><span class="price">$200</span>
-                        <p class="item-name">Product 1</p>
-                        <p class="item-description">Lorem ipsum dolor sit amet</p>
+                    {% for cart in cart_list %}
+                    <div class="item"><span class="price">${{cart.price}}</span>
+                        <p class="item-name">{{cart.movie.title}}</p>
+                        <p class="item-description">{{cart.movie.desc}}</p>
                     </div>
-                    <div class="item"><span class="price">$120</span>
-                        <p class="item-name">Product 2</p>
-                        <p class="item-description">Lorem ipsum dolor sit amet</p>
-                    </div>
+                    {% endfor %}
                     <input type="hidden" id="price" name="price" value="320"> <!-- TODO: TOTAL PRICE-->
-                    <div class="total"><span>Total</span><span class="price">$320</span></div>
+                    <div class="total"><span>Total</span><span class="price">${{cart_list | sum(attribute='price')}}</span></div>
                 </div>
                 <div class="card-details">
                     <h3 class="title">Credit Card Details</h3>
