@@ -28,7 +28,7 @@ def unauthorized_access():
 def create_app():
     app2 = Flask(__name__)
     app2.config.from_object("settings")
-    app2.config['UPLOAD_FOLDER'] = 'static'
+    app2.config['UPLOAD_FOLDER'] = '/static'
     app2.register_blueprint(site)
     lm.init_app(app2)
     return app2
