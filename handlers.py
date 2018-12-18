@@ -87,10 +87,11 @@ def movies_update(movie_id):
 def movie_watch(movie_id):
     # Get current movie infos
     # CHECK IF USER CAN REALLY WATCH THE MOVIE FROM DATABASE
-
+    if not current_user.is_authenticated:
+        return redirect(url_for('site.home'))
     response = requests.get(PAYMENT + "payment/rent/get/"+str(current_user.id))
     if response.status_code != 200:
-        return redirect(url_for('site.library'),form=None)
+        return redirect(url_for('site.library',form=None))
     res_json = json.loads(response.content)
     flag = False
     for movie in res_json['movies_list']:
@@ -101,7 +102,7 @@ def movie_watch(movie_id):
         form.data={}
         form.error={}
         form.error["notcompleted"] = "You are not authorized to watch this movie!"
-        return redirect(url_for('site.library'),form=None)
+        return redirect(url_for('site.library'),form=form)
 
     # GET MOVIE WITH MOVIE ID
     my_cast = Cast([Actor('Ali', 'Veli', 'Venom'),
@@ -176,6 +177,9 @@ def aboutus():
 
 @site.route('/admin', methods=['GET', 'POST'])
 def admin():
+    ## TODO : ADD ADMIN AUTH
+    if not current_user.is_admin:
+        return redirect(url_for('site.home'))
     # TODO: Change this with microservice and change this tuple list anout movie
     # MOVIE_LIST should got changed with classes. Becuase update form should be filled with default values
     movie_list = [('ali', 1), ('ata', 2), ('bak', 3),
@@ -192,6 +196,8 @@ def admin():
  
 @site.route('/cart', methods=['GET', 'POST'])
 def cart():
+    if not current_user.is_authenticated:
+        return redirect(url_for('site.home'))
     # TODO: Connect these with db
     my_cast = Cast([Actor('Ali', 'Veli', 'Venom'),
                     Actor('Hasan', 'Mahmut', 'Second Vecom')])
@@ -207,7 +213,17 @@ def cart():
 
 @site.route('/library', methods=['GET', 'POST'])
 def library():
-    # TODO: Send current user ID to the db and get their movie library
+    if not current_user.is_authenticated:
+        return redirect(url_for('site.home'))
+
+    response = requests.get(PAYMENT + "payment/rent/get/"+str(current_user.id))
+    if response.status_code != 200:
+        return redirect(url_for('site.library',form=None))
+    res_json = json.loads(response.content)
+    for movie in res_json['movies_list']:
+    # TODO : SEND TO MOVIE DATABASE TO GET MOVIE INFO
+    #    movie['movie_id']
+        print(movie)
 
     # TODO: Change this with microservice with the search params
     my_cast = Cast([Actor('Ali', 'Veli', 'Venom'),
@@ -223,7 +239,7 @@ def library():
               'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg","/static/vid/movies/bohemian_rhapsody.mp4")
     ]
 
-    return render_template('library/index.html', movie_list=movie_list)
+    return render_template('library/index.html', movie_list=movie_list,form=None)
 
 
 @site.route('/announcement/add', methods=['POST'])
@@ -259,6 +275,8 @@ def add_announcement():
 
 @site.route('/payment', methods=['GET', 'POST'])
 def payment():
+    if not current_user.is_authenticated:
+        return redirect(url_for('site.home'))
     if request.method == 'GET':
         return render_template('payment/index.html', form=None)
     else:
@@ -279,7 +297,7 @@ def payment():
             'cost': '200'  # TODO: Change this
         }
 
-        endpoint = 'http://dfcf2d0f.ngrok.io/payment/pay/10'
+        endpoint = 'http://dfcf2d0f.ngrok.io/payment/pay/'+current_user.id
         rv = requests.post(endpoint, json=pay_json)
 
         if rv != 200:
