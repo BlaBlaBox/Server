@@ -201,9 +201,9 @@ def add_movie():
         absolute_path = os.path.abspath("./" + video_path)
         print("video_path=", video_path)
         print("absolute=", absolute_path)
-        video.save(absolute_path)
+        video.save(video_path)
 
-    movie_json = {"movie_id":imdb_id,"rent":rent_price,"purchase":rent_price,"video_url":absolute_path}
+    movie_json = {"movie_id":imdb_id,"rent":rent_price,"purchase":rent_price,"video_url":video_path}
     rv = requests.post(MOVIE + "movie/add",json=movie_json)
 
     return redirect(url_for('site.admin'))
