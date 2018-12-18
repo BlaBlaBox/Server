@@ -15,7 +15,8 @@ from classes.User import UserObj
 
 from api_links import AUTH, MOVIE, PAYMENT, ANNCMT
 
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','mp4','x-m4v'])
+ALLOWED_EXTENSIONS = set(
+    ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp4', 'x-m4v'])
 
 
 site = Blueprint('site', __name__)
@@ -54,13 +55,13 @@ def movies_index():
                     Actor('Hasan', 'Mahmut', 'Second Vecom')])
     movie_list = [
         Movie(0, 'Ali', 'Lorem ipsum', 1, 100,
-              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg","/static/vid/movies/bohemian_rhapsody.mp4"),
+              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4"),
         Movie(2, 'Ali', 'Lorem ipsum', 3, 100,
-              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg","/static/vid/movies/bohemian_rhapsody.mp4"),
+              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4"),
         Movie(3, 'Ali', 'Lorem ipsum', 5, 100,
-              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg","/static/vid/movies/bohemian_rhapsody.mp4"),
+              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4"),
         Movie(4, 'Ali', 'Lorem ipsum', 2.5, 100,
-              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg","/static/vid/movies/bohemian_rhapsody.mp4")
+              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4")
     ]
 
     return render_template('movie/index.html', movie_list=movie_list)
@@ -72,7 +73,7 @@ def movies_show(movie_id):
     my_cast = Cast([Actor('Ali', 'Veli', 'Venom'),
                     Actor('Hasan', 'Mahmut', 'Second Vecom')])
     movie = Movie(1, 'Ali', 'Lorem ipsum', 4, 100,
-                  'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg","/static/vid/movies/bohemian_rhapsody.mp4")
+                  'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4")
 
     return render_template('movie/show.html', movie=movie)
 
@@ -91,29 +92,26 @@ def movie_watch(movie_id):
         return redirect(url_for('site.home'))
     response = requests.get(PAYMENT + "payment/rent/get/"+str(current_user.id))
     if response.status_code != 200:
-        return redirect(url_for('site.library',form=None))
+        return redirect(url_for('site.library', form=None))
     res_json = json.loads(response.content)
     flag = False
     for movie in res_json['movies_list']:
         if movie['movie_id'] == str(movie_id):
-            flag = True 
+            flag = True
 
     if not flag:
-        form.data={}
-        form.error={}
+        form.data = {}
+        form.error = {}
         form.error["notcompleted"] = "You are not authorized to watch this movie!"
-        return redirect(url_for('site.library'),form=form)
+        return redirect(url_for('site.library'), form=form)
 
     # GET MOVIE WITH MOVIE ID
     my_cast = Cast([Actor('Ali', 'Veli', 'Venom'),
                     Actor('Hasan', 'Mahmut', 'Second Vecom')])
     movie = Movie(1, 'Ali', 'Lorem ipsum', 4, 100,
-                  'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rhapsody.jpg" , "/static/vid/movies/bohemian_rhapsody.mp4")
-    
-
+                  'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rhapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4")
 
     return render_template('watch/index.html', movie=movie)
-
 
 
 @site.route('/movies/update', methods=['POST'])
@@ -137,6 +135,7 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+
 @site.route('/movies/add', methods=['POST'])
 def add_movie():
     image = request.files["image_path"]
@@ -148,28 +147,27 @@ def add_movie():
     video_path = ""
 
     if image and allowed_file(image.filename):
-            filename = secure_filename(image.filename)
-            imagepath = "/img/movies/"
-            imagepath = current_app.config['UPLOAD_FOLDER'] + imagepath + filename
-            absolute_path = os.path.abspath("./" + imagepath)
-            image.save(absolute_path)
-            print("img_path=",imagepath)
-            print("absolute=",absolute_path)
-            image_path = imagepath
-            
-    
+        filename = secure_filename(image.filename)
+        imagepath = "/img/movies/"
+        imagepath = current_app.config['UPLOAD_FOLDER'] + imagepath + filename
+        absolute_path = os.path.abspath("./" + imagepath)
+        image.save(absolute_path)
+        print("img_path=", imagepath)
+        print("absolute=", absolute_path)
+        image_path = imagepath
+
     if video and allowed_file(video.filename):
-            filename = secure_filename(video.filename)
-            videopath = "/vid/movies/"
-            videopath = current_app.config['UPLOAD_FOLDER'] + videopath + filename
-            absolute_path = os.path.abspath("./" + videopath)
-            print("video_path=",video_path)
-            print("absolute=",absolute_path)
-            video.save(absolute_path)
-            video_path = videopath
-    
+        filename = secure_filename(video.filename)
+        videopath = "/vid/movies/"
+        videopath = current_app.config['UPLOAD_FOLDER'] + videopath + filename
+        absolute_path = os.path.abspath("./" + videopath)
+        print("video_path=", video_path)
+        print("absolute=", absolute_path)
+        video.save(absolute_path)
+        video_path = videopath
+
     print(video_path)
-    ## TODO create movie send to the microservice to add
+    # TODO create movie send to the microservice to add
     return redirect(url_for('site.admin'))
 
 
@@ -195,7 +193,8 @@ def admin():
             (user_json['username'] + ' / ' + user_json['email'], user_json['user_id']))
 
     return render_template('admin/index.html', user_list=user_list, movie_list=movie_list)
- 
+
+
 @site.route('/cart', methods=['GET', 'POST'])
 def cart():
     if not current_user.is_authenticated:
@@ -207,15 +206,15 @@ def cart():
     res_json = json.loads(response.content)
     for item in res_json['item_list']:
         # Send to the movie database get movies add them to cart element
-        print(item.movie_id)
+        print(item)
     # TODO: Connect these with db
     my_cast = Cast([Actor('Ali', 'Veli', 'Venom'),
                     Actor('Hasan', 'Mahmut', 'Second Vecom')])
 
     movie = Movie(1, 'Ali', 'Lorem ipsum', 4, 100,
-                  'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg","/static/vid/movies/bohemian_rhapsody.mp4")
+                  'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4")
     movie_two = Movie(1, 'Ali', 'Lorem ipsum', 4, 100,
-                      'Mahmut HASANANANANANAN', my_cast, "/static/img/movies/bohemian_rapsody.jpg","/static/vid/movies/bohemian_rhapsody.mp4")
+                      'Mahmut HASANANANANANAN', my_cast, "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4")
     cart_list = [CartElemnt(movie, -1, 100), CartElemnt(movie_two, 7, 500),
                  CartElemnt(movie_two, 7, 400), CartElemnt(movie_two, 7, 300)]
     return render_template('cart/index.html', cart_list=cart_list)
@@ -228,11 +227,11 @@ def library():
 
     response = requests.get(PAYMENT + "payment/rent/get/"+str(current_user.id))
     if response.status_code != 200:
-        return redirect(url_for('site.library',form=None))
+        return redirect(url_for('site.library', form=None))
     res_json = json.loads(response.content)
     for movie in res_json['movies_list']:
-    # TODO : SEND TO MOVIE DATABASE TO GET MOVIE INFO
-    #    movie['movie_id']
+        # TODO : SEND TO MOVIE DATABASE TO GET MOVIE INFO
+        #    movie['movie_id']
         print(movie)
 
     # TODO: Change this with microservice with the search params
@@ -240,16 +239,16 @@ def library():
                     Actor('Hasan', 'Mahmut', 'Second Vecom')])
     movie_list = [
         Movie(0, 'Ali', 'Lorem ipsum', 1, 100,
-              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg","/static/vid/movies/bohemian_rhapsody.mp4"),
+              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4"),
         Movie(1, 'Ali', 'Lorem ipsum', 3, 100,
-              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg","/static/vid/movies/bohemian_rhapsody.mp4"),
+              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4"),
         Movie(2, 'Ali', 'Lorem ipsum', 5, 100,
-              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg","/static/vid/movies/bohemian_rhapsody.mp4"),
+              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4"),
         Movie(3, 'Ali', 'Lorem ipsum', 2.5, 100,
-              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg","/static/vid/movies/bohemian_rhapsody.mp4")
+              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4")
     ]
 
-    return render_template('library/index.html', movie_list=movie_list,form=None)
+    return render_template('library/index.html', movie_list=movie_list, form=None)
 
 
 @site.route('/announcement/add', methods=['POST'])
@@ -295,20 +294,23 @@ def payment():
         form = request.form
         form.data = {}
         form.errors = {}
-        print(form["cardholder"])
-        print(form["expiration-month"])
-        print(form["expiration-year"])
-        print(form["cardnumber"])
-        print(form["cvc"])
+
+        print(form['cardholder'])
+        print(form['expiration-month'])
+        print(form['expiration-year'])
+        print(form['cardnumber'])
+        print(form['cvc'])
+        print(form['price'])
 
         pay_json = {
             'holder': form["cardholder"],
             'expiration': form["expiration-month"] + form["expiration-year"],
             'number': form["cardnumber"],
             'cvc': form['cvc'],
-            'cost': '200'  # TODO: Change this
+            'cost': form['price']
         }
 
+        # CHANGE this endpoint
         endpoint = 'http://dfcf2d0f.ngrok.io/payment/pay/'+current_user.id
         rv = requests.post(endpoint, json=pay_json)
 
