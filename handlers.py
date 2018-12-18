@@ -14,11 +14,11 @@ from classes.CartElement import *
 from classes.User import UserObj
 
 from api_links import AUTH, MOVIE, PAYMENT, ANNCMT
+from server import lm
 
 ALLOWED_EXTENSIONS = set(
     ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp4', 'x-m4v'])
 
-from server import lm
 
 
 site = Blueprint('site', __name__)
@@ -52,7 +52,7 @@ def movies_index():
     search_value = request.args.get('movie_name')
     search_value = search_value if search_value is not None else ''
     rv = requests.get(MOVIE + "movie/get")
-    if rv.status_code != 200
+    if rv.status_code != 200:
         return render_template('movie/index.html', movie_list=None)
     rv_json = rv.json()
     movies = rv_json['movies']
@@ -154,7 +154,7 @@ def add_movie():
         print("absolute=", absolute_path)
         video.save(absolute_path)
 
-    movie_json = {"movie_id":imdb_id,"rent":rent_price,"purchase":rent_price,"video_path":video_path}
+    movie_json = {"movie_id":imdb_id,"rent":rent_price,"purchase":rent_price,"video_url":video_path}
     rv = requests.post(MOVIE + "movie/add",json=movie_json)
 
     return redirect(url_for('site.admin'))
