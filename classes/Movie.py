@@ -1,5 +1,5 @@
 class Movie():
-    def __init__(self, id, title, desc, star, price, director, cast, pic,video):
+    def __init__(self, id, title, desc, star, price, pic,video,cast):
         self.id = id
         self.title = title
         self.desc = desc
@@ -8,7 +8,7 @@ class Movie():
         self.pic = pic
         self.video = video
         self.cast = cast
-        self.director = director
+
 
     def int_star(self):
         return int(self.star)
