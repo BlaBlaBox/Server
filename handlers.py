@@ -76,6 +76,7 @@ def movies_index():
     # Take the search value parameter
     search_value = request.args.get('movie_name')
     search_value = search_value if search_value is not None else ''
+
     rv = requests.get(MOVIE + "movie/get")
     print(rv.status_code)
 
@@ -100,6 +101,7 @@ def movies_index():
             movie_list.append(Movie(movie['movie_id'], movie['movie_title'], movie['information'],
                            movie['rating']/2, movie['purchase_price'], movie['cover_url'], movie['video_url'], my_cast))
 
+    movie_list = [movie for movie in movie_list if search_value.lower() in movie.title.lower()]
     return render_template('movie/index.html', movie_list=movie_list)
 
 
@@ -218,10 +220,20 @@ def aboutus():
 def admin():
     if not current_user.is_admin:
         return redirect(url_for('site.home'))
-    # TODO: Change this with microservice and change this tuple list anout movie
     # MOVIE_LIST should got changed with classes. Becuase update form should be filled with default values
-    movie_list = [('ali', 1), ('ata', 2), ('bak', 3),
-                  ('irem', 4), ('okula', 5), ('git', 6)]
+    rv = requests.get(MOVIE + "movie/get")
+    print(rv.status_code)
+
+    if rv.status_code != 200:
+        return render_template('movie/index.html', movie_list=None)
+    rv_json = rv.json()
+    movies = rv_json['movies']
+    movie_list = []
+
+    for movie in movies:
+        movie_list.append((movie['movie_title'], movie['movie_id']))
+
+    
     # Find all users
     user_list = []
     rv = requests.get(AUTH + "user/get")
