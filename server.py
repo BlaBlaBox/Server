@@ -2,14 +2,14 @@ import requests
 from flask import Flask, abort
 #from flask import Blueprint
 from flask_login import LoginManager
-from handlers import site
+from handlers import site, login
 from api_links import AUTH
 from classes.User import UserObj
 # from classes.UserAccount import UserAccount
 
 
 lm = LoginManager()
-
+lm.login_view = login
 
 @lm.user_loader
 def load_user(user_id):

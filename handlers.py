@@ -14,7 +14,6 @@ from classes.CartElement import *
 from classes.User import UserObj
 
 from api_links import AUTH, MOVIE, PAYMENT, ANNCMT
-from server import lm
 
 ALLOWED_EXTENSIONS = set(
     ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp4', 'x-m4v'])
@@ -405,6 +404,3 @@ def suspend_user():
 #     # a = requests.get('http://053e8eac.ngrok.io/payment/create').content
 #     # print('asdf')
 #     return requests.get('http://053e8eac.ngrok.io/payment/create').content
-
-
-lm.login_view = login
