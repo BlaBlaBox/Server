@@ -19,7 +19,6 @@ ALLOWED_EXTENSIONS = set(
     ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp4', 'x-m4v'])
 
 
-
 site = Blueprint('site', __name__)
 
 
@@ -42,6 +41,36 @@ def search_movie():
     return redirect(url_for('site.movies_index', movie_name=request.form['search']))
 
 
+@site.route('/movie/<int:movie_id>/<int:price>/rent', methods=['POST'])
+def movie_rent(movie_id, price):
+    rent_json = {
+        'movie_id': str(movie_id),
+        'price': str(price),
+        'duration': '7'
+    }
+    print(rent_json)
+    
+    rv = requests.post(PAYMENT + "cart/item/create/" + str(current_user.id), json=rent_json)
+    print(rv.content)
+
+    return redirect(url_for('site.movies_index'))
+
+
+@site.route('/movie/<int:movie_id>/<int:price>/buy', methods=['POST'])
+def movie_buy(movie_id, price):
+    
+    buy_json = {
+        'movie_id': str(movie_id),
+        'price': str(price),
+        'duration': '0'
+    }
+    
+    print(buy_json)
+    rv = requests.post(PAYMENT + "cart/item/create/" + str(current_user.id), json=buy_json)
+    print(rv.content)
+    return redirect(url_for('site.movies_index'))
+
+
 @site.route('/movies', methods=['GET', 'POST'])
 def movies_index():
     # Take the search value parameter
@@ -54,11 +83,13 @@ def movies_index():
         return render_template('movie/index.html', movie_list=None)
     rv_json = rv.json()
     movies = rv_json['movies']
-    print(movies)
     movie_list = []
+
     for movie in movies:
         my_cast = []
-        cast_rv = requests.get(MOVIE + "movie/get/"+ str(movie['movie_id']) + "/cast")
+
+        cast_rv = requests.get(MOVIE + "movie/get/" +
+                               str(movie['movie_id']) + "/cast")
         cast_json = cast_rv.json()
         print(cast_json)
 
@@ -66,20 +97,37 @@ def movies_index():
             for actor in cast_json['cast']:
                 my_cast.append(Actor(actor['name']))
 
-        movies_list.append(Movie(movie['movie_id'],movie['movie_title'],movie['information'],movie['rating'],movie['purchase_price'],movie['cover_url'],movie['video_url'],my_cast))
+            movie_list.append(Movie(movie['movie_id'], movie['movie_title'], movie['information'],
+                           movie['rating']/2, movie['purchase_price'], movie['cover_url'], movie['video_url'], my_cast))
 
     return render_template('movie/index.html', movie_list=movie_list)
 
 
 @site.route('/movies/<int:movie_id>', methods=['GET', 'POST'])
 def movies_show(movie_id):
-    # TODO: Change this with db by using movie_id
-    my_cast = Cast([Actor('Ali', 'Veli', 'Venom'),
-                    Actor('Hasan', 'Mahmut', 'Second Vecom')])
-    movie = Movie(1, 'Ali', 'Lorem ipsum', 4, 100,
-                  'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4")
 
-    return render_template('movie/show.html', movie=movie)
+    # TODO: Change this with db by using movie_id
+
+    movie_info_request = requests.get(MOVIE + 'movie/get/' + str(movie_id))
+    movie_info = movie_info_request.json()
+    movie = movie_info['movie']
+
+    actor_list = []
+
+    cast_rv = requests.get(MOVIE + "movie/get/" + str(movie_id) + "/cast")
+    cast_json = cast_rv.json()
+
+    if cast_rv.status_code == 200:
+        for actor in cast_json['cast']:
+            actor_list.append(Actor(actor['name']))
+
+        print(actor_list)
+        movie = Movie(movie['movie_id'], movie['movie_title'], movie['information'],
+                        movie['rating']/2, movie['purchase_price'], movie['cover_url'], movie['video_url'], Cast(actor_list))
+    
+
+        return render_template('movie/show.html', movie=movie)
+    return redirect(url_for('site.home'))
 
 
 @site.route('/movies/<int:movie_id>/update', methods=['GET', 'POST'])
@@ -196,16 +244,23 @@ def cart():
     for item in res_json['item_list']:
         # Send to the movie database get movies add them to cart element
         print(item)
+    
     # TODO: Connect these with db
-    my_cast = Cast([Actor('Ali', 'Veli', 'Venom'),
-                    Actor('Hasan', 'Mahmut', 'Second Vecom')])
+    my_cast = Cast([Actor('Brad Pitt'),
+                    Actor('Nikol Varsov')])
 
-    movie = Movie(1, 'Ali', 'Lorem ipsum', 4, 100,
-                  'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4")
-    movie_two = Movie(1, 'Ali', 'Lorem ipsum', 4, 100,
-                      'Mahmut HASANANANANANAN', my_cast, "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4")
+            
+
+    
+    movie = Movie(1, 'Bohem', 'Bohemian Rhapsody', 1, 200,
+                  "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4", my_cast),
+    movie_two = Movie(1, 'Bohem', 'Bohemian Rhapsody', 4, 100,
+                  "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4", my_cast),
+    
+    
     cart_list = [CartElemnt(movie, -1, 100), CartElemnt(movie_two, 7, 500),
                  CartElemnt(movie_two, 7, 400), CartElemnt(movie_two, 7, 300)]
+    
     return render_template('cart/index.html', cart_list=cart_list)
 
 
@@ -218,23 +273,35 @@ def library():
     if response.status_code != 200:
         return redirect(url_for('site.library'))
     res_json = json.loads(response.content)
+    print(res_json)
+
+    
+    owned_movie_id_list = []
     for movie in res_json['movies_list']:
-        # TODO : SEND TO MOVIE DATABASE TO GET MOVIE INFO
-        #    movie['movie_id']
-        print(movie)
+        owned_movie_id_list.append(movie['movie_id'])
+
+    print(owned_movie_id_list)
+    for movie_id in owned_movie_id_list:
+        print(MOVIE + 'movie/get/' + str(movie_id))
+        movie_info_request = requests.get(MOVIE + 'movie/get/' + str(movie_id))
+        print(movie_info_request)
+        movie_info = movie_info_request.json()
+
 
     # TODO: Change this with microservice with the search params
-    my_cast = Cast([Actor('Ali', 'Veli', 'Venom'),
-                    Actor('Hasan', 'Mahmut', 'Second Vecom')])
+    my_cast = Cast([Actor('Brad Pitt'),
+                    Actor('Nikol Varsov')])
+
+
     movie_list = [
-        Movie(0, 'Ali', 'Lorem ipsum', 1, 100,
-              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4"),
-        Movie(1, 'Ali', 'Lorem ipsum', 3, 100,
-              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4"),
-        Movie(2, 'Ali', 'Lorem ipsum', 5, 100,
-              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4"),
-        Movie(3, 'Ali', 'Lorem ipsum', 2.5, 100,
-              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4")
+        Movie(1, 'Bohem', 'Bohemian Rhapsody', 1, 200,
+                  "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4", my_cast),
+        Movie(1, 'Bohem', 'Bohemian Rhapsody', 4, 100,
+                  "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4", my_cast),
+        Movie(1, 'Bohem', 'Bohemian Rhapsody', 2.5, 300,
+                  "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4", my_cast),
+        Movie(1, 'Bohem', 'Bohemian Rhapsody', 5, 150,
+                  "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4", my_cast),
     ]
 
     return render_template('library/index.html', movie_list=movie_list, form=None)
@@ -383,6 +450,11 @@ def login():
             # print(json.loads(res_json.content))
             user = UserObj(**res_json["user"])
             login_user(user)
+
+            # Create cart
+            print(PAYMENT + "cart/create/" + str(user.id))
+            rv = requests.post(PAYMENT + "cart/create/" + str(user.id))
+
             return redirect(url_for('site.home'))
 
 

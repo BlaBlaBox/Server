@@ -81,8 +81,8 @@
                             {% for mov in movie_list %}
                                 <div class="col-12 col-md-6 col-lg-4">
                                     <div class="clean-product-item">
-                                        <div class="image"><a href="{{url_for('site.movies_show',movie_id=2)}}"><img class="img-fluid d-block mx-auto" src={{mov.pic}}></a></div>
-                                        <div class="product-name"><a href="{{url_for('site.movies_show',movie_id = 2)}}">{{mov.title}}</a></div>
+                                        <div class="image"><a href="{{url_for('site.movies_show',movie_id=mov.id)}}"><img class="img-fluid d-block mx-auto" src={{mov.pic}}></a></div>
+                                        <div class="product-name"><a href="{{url_for('site.movies_show',movie_id = mov.id)}}">{{mov.title}}</a></div>
                                         <div class="about">
                                             <div class="rating">
 
