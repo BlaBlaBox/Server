@@ -54,13 +54,13 @@ def movies_index():
                     Actor('Hasan', 'Mahmut', 'Second Vecom')])
     movie_list = [
         Movie(0, 'Ali', 'Lorem ipsum', 1, 100,
-              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg"),
+              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg","/static/vid/movies/bohemian_rhapsody.mp4"),
         Movie(2, 'Ali', 'Lorem ipsum', 3, 100,
-              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg"),
+              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg","/static/vid/movies/bohemian_rhapsody.mp4"),
         Movie(3, 'Ali', 'Lorem ipsum', 5, 100,
-              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg"),
+              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg","/static/vid/movies/bohemian_rhapsody.mp4"),
         Movie(4, 'Ali', 'Lorem ipsum', 2.5, 100,
-              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg")
+              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg","/static/vid/movies/bohemian_rhapsody.mp4")
     ]
 
     return render_template('movie/index.html', movie_list=movie_list)
@@ -72,7 +72,7 @@ def movies_show(movie_id):
     my_cast = Cast([Actor('Ali', 'Veli', 'Venom'),
                     Actor('Hasan', 'Mahmut', 'Second Vecom')])
     movie = Movie(1, 'Ali', 'Lorem ipsum', 4, 100,
-                  'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg")
+                  'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg","/static/vid/movies/bohemian_rhapsody.mp4")
 
     return render_template('movie/show.html', movie=movie)
 
@@ -86,11 +86,33 @@ def movies_update(movie_id):
 @site.route('/movie/<int:movie_id>/watch', methods=['GET', 'POST'])
 def movie_watch(movie_id):
     # Get current movie infos
+    # CHECK IF USER CAN REALLY WATCH THE MOVIE FROM DATABASE
+
+    response = requests.get(PAYMENT + "payment/rent/get/"+str(current_user.id))
+    if response.status_code != 200:
+        return redirect(url_for('site.library'),form=None)
+    res_json = json.loads(response.content)
+    flag = False
+    for movie in res_json['movies_list']:
+        if movie['movie_id'] == str(movie_id):
+            flag = True 
+
+    if not flag:
+        form.data={}
+        form.error={}
+        form.error["notcompleted"] = "You are not authorized to watch this movie!"
+        return redirect(url_for('site.library'),form=None)
+
+    # GET MOVIE WITH MOVIE ID
     my_cast = Cast([Actor('Ali', 'Veli', 'Venom'),
                     Actor('Hasan', 'Mahmut', 'Second Vecom')])
     movie = Movie(1, 'Ali', 'Lorem ipsum', 4, 100,
-                  'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg")
+                  'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rhapsody.jpg" , "/static/vid/movies/bohemian_rhapsody.mp4")
+    
+
+
     return render_template('watch/index.html', movie=movie)
+
 
 
 @site.route('/movies/update', methods=['POST'])
@@ -124,20 +146,21 @@ def add_movie():
     if image and allowed_file(image.filename):
             filename = secure_filename(image.filename)
             imagepath = "/img/movies/"
-            imagepath = imagepath + filename
-            absolute_path = os.path.abspath("./"+current_app.config['UPLOAD_FOLDER']+imagepath)
+            imagepath = current_app.config['UPLOAD_FOLDER'] + imagepath + filename
+            absolute_path = os.path.abspath("./" + imagepath)
             image.save(absolute_path)
-            image_path = absolute_path
+            image_path = imagepath
+            
     
     if video and allowed_file(video.filename):
             filename = secure_filename(video.filename)
-            imagepath = "/vid/movies/"
-            imagepath = imagepath + filename
-            absolute_path = os.path.abspath("./"+current_app.config['UPLOAD_FOLDER']+imagepath)
+            videopath = "/vid/movies/"
+            videopath = current_app.config['UPLOAD_FOLDER'] + videopath + filename
+            absolute_path = os.path.abspath("./" + videopath)
             video.save(absolute_path)
-            video_path = absolute_path
+            video_path = videopath
     
-    
+    print(video_path)
     ## TODO create movie send to the microservice to add
     return redirect(url_for('site.admin'))
 
@@ -170,9 +193,9 @@ def cart():
                     Actor('Hasan', 'Mahmut', 'Second Vecom')])
 
     movie = Movie(1, 'Ali', 'Lorem ipsum', 4, 100,
-                  'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg")
+                  'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg","/static/vid/movies/bohemian_rhapsody.mp4")
     movie_two = Movie(1, 'Ali', 'Lorem ipsum', 4, 100,
-                      'Mahmut HASANANANANANAN', my_cast, "/static/img/movies/bohemian_rapsody.jpg")
+                      'Mahmut HASANANANANANAN', my_cast, "/static/img/movies/bohemian_rapsody.jpg","/static/vid/movies/bohemian_rhapsody.mp4")
     cart_list = [CartElemnt(movie, -1, 100), CartElemnt(movie_two, 7, 500),
                  CartElemnt(movie_two, 7, 400), CartElemnt(movie_two, 7, 300)]
     return render_template('cart/index.html', cart_list=cart_list)
@@ -187,13 +210,13 @@ def library():
                     Actor('Hasan', 'Mahmut', 'Second Vecom')])
     movie_list = [
         Movie(0, 'Ali', 'Lorem ipsum', 1, 100,
-              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg"),
+              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg","/static/vid/movies/bohemian_rhapsody.mp4"),
         Movie(1, 'Ali', 'Lorem ipsum', 3, 100,
-              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg"),
+              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg","/static/vid/movies/bohemian_rhapsody.mp4"),
         Movie(2, 'Ali', 'Lorem ipsum', 5, 100,
-              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg"),
+              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg","/static/vid/movies/bohemian_rhapsody.mp4"),
         Movie(3, 'Ali', 'Lorem ipsum', 2.5, 100,
-              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg")
+              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg","/static/vid/movies/bohemian_rhapsody.mp4")
     ]
 
     return render_template('library/index.html', movie_list=movie_list)
@@ -268,7 +291,7 @@ def register():
         if current_user.is_authenticated:
             return redirect(url_for('site.home'))
         else:
-            return render_template('login/index.html', form=None)
+            return render_template('register/index.html', form=None)
     else:
         form = request.form
         form.data = {}
