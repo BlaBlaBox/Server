@@ -148,7 +148,7 @@ def add_movie():
             imagepath = "/img/movies/"
             imagepath = current_app.config['UPLOAD_FOLDER'] + imagepath + filename
             absolute_path = os.path.abspath("./" + imagepath)
-            image.save(imagepath)
+            image.save(absolute_path)
             print("img_path=",imagepath)
             print("absolute=",absolute_path)
             image_path = imagepath
@@ -161,7 +161,7 @@ def add_movie():
             absolute_path = os.path.abspath("./" + videopath)
             print("video_path=",video_path)
             print("absolute=",absolute_path)
-            video.save(video_path)
+            video.save(absolute_path)
             video_path = videopath
     
     print(video_path)
