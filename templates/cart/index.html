@@ -8,7 +8,7 @@
             <div class="container">
                 <div class="block-heading">
                     <h2 class="text-info">Shopping Cart</h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quam urna, dignissim nec auctor in, mattis vitae leo.</p>
+                    <p>Here is all the movies that you have added to your cart. You can easily buy them from here.</p>
                 </div>
                 <div class="content">
                     <div class="row no-gutters">
@@ -23,7 +23,7 @@
                                                 </div>
                                                 <div class="col-md-5 product-info"><a href="#" class="product-name">{{element.movie.title}}</a></div>
                                                     <div class="col-6 col-md-2 quantity">
-                                                <label class="d-none d-md-block" for="quantity">Duration(Weeks)</label>
+                                                <label class="d-none d-md-block" for="quantity">Duration(Days)</label>
                                                 {% if element.duration != -1 %}
                                                     <input type="number" value="{{element.duration}}"  class="form-control quantity-input js-number" max=14 min=7 step=7>
                                                 {% else %}
