@@ -154,13 +154,14 @@ def movie_watch(movie_id):
     if not flag:
         return redirect(url_for('site.library'))
 
-    # GET MOVIE WITH MOVIE ID
-    my_cast = Cast([Actor('Ali', 'Veli', 'Venom'),
-                    Actor('Hasan', 'Mahmut', 'Second Vecom')])
-    movie = Movie(1, 'Ali', 'Lorem ipsum', 4, 100,
-                  'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rhapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4")
+    movie_info_request = requests.get(MOVIE + 'movie/get/' + str(movie_id))
+    print(movie_info_request)
+    movie_info = movie_info_request.json()
+    movie_info = movie_info['movie']
+    my_movie = Movie(movie_info['movie_id'], movie_info['movie_title'], movie_info['information'],
+                   movie_info['rating']/2, movie_info['purchase_price'], movie_info['cover_url'], movie_info['video_url'], None)
 
-    return render_template('watch/index.html', movie=movie)
+    return render_template('watch/index.html', movie=my_movie)
 
 
 @site.route('/movies/update', methods=['POST'])
@@ -285,40 +286,37 @@ def library():
 
     response = requests.get(PAYMENT + "payment/rent/get/"+str(current_user.id))
     if response.status_code != 200:
-        return redirect(url_for('site.library'))
+        return redirect(url_for('site.home'))
+
     res_json = json.loads(response.content)
     print(res_json)
-
     
     owned_movie_id_list = []
+    my_movie_list = []
     for movie in res_json['movies_list']:
         owned_movie_id_list.append(movie['movie_id'])
 
     print(owned_movie_id_list)
     for movie_id in owned_movie_id_list:
+        my_cast=[]
         print(MOVIE + 'movie/get/' + str(movie_id))
         movie_info_request = requests.get(MOVIE + 'movie/get/' + str(movie_id))
         print(movie_info_request)
         movie_info = movie_info_request.json()
+        movie_info = movie_info['movie']
+
+        cast_rv = requests.get(MOVIE + "movie/get/" + str(movie_info['movie_id']) + "/cast")
+        cast_json = cast_rv.json()
+        print(cast_json)
+        if cast_rv.status_code == 200:
+            for actor in cast_json['cast']:
+                my_cast.append(Actor(actor['name']))
+
+            my_movie_list.append(Movie(movie_info['movie_id'], movie_info['movie_title'], movie_info['information'],
+                           movie_info['rating']/2, movie_info['purchase_price'], movie_info['cover_url'], movie_info['video_url'], my_cast))
 
 
-    # TODO: Change this with microservice with the search params
-    my_cast = Cast([Actor('Brad Pitt'),
-                    Actor('Nikol Varsov')])
-
-
-    movie_list = [
-        Movie(1, 'Bohem', 'Bohemian Rhapsody', 1, 200,
-                  "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4", my_cast),
-        Movie(1, 'Bohem', 'Bohemian Rhapsody', 4, 100,
-                  "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4", my_cast),
-        Movie(1, 'Bohem', 'Bohemian Rhapsody', 2.5, 300,
-                  "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4", my_cast),
-        Movie(1, 'Bohem', 'Bohemian Rhapsody', 5, 150,
-                  "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4", my_cast),
-    ]
-
-    return render_template('library/index.html', movie_list=movie_list, form=None)
+    return render_template('library/index.html', movie_list=my_movie_list)
 
 
 @site.route('/announcement/add', methods=['POST'])
