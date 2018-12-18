@@ -89,10 +89,9 @@ def movie_watch(movie_id):
     # CHECK IF USER CAN REALLY WATCH THE MOVIE FROM DATABASE
     if not current_user.is_authenticated:
         return redirect(url_for('site.home'))
-    form = request.form
     response = requests.get(PAYMENT + "payment/rent/get/"+str(current_user.id))
     if response.status_code != 200:
-        return redirect(url_for('site.library',form=None))
+        return redirect(url_for('site.library'))
     res_json = json.loads(response.content)
     flag = False
     for movie in res_json['movies_list']:
@@ -100,10 +99,7 @@ def movie_watch(movie_id):
             flag = True 
 
     if not flag:
-        form.data={}
-        form.error={}
-        form.error["notcompleted"] = "You are not authorized to watch this movie!"
-        return redirect(url_for('site.library'),form=form)
+        return redirect(url_for('site.library'))
 
     # GET MOVIE WITH MOVIE ID
     my_cast = Cast([Actor('Ali', 'Veli', 'Venom'),
@@ -229,7 +225,7 @@ def library():
 
     response = requests.get(PAYMENT + "payment/rent/get/"+str(current_user.id))
     if response.status_code != 200:
-        return redirect(url_for('site.library',form=None))
+        return redirect(url_for('site.library'))
     res_json = json.loads(response.content)
     for movie in res_json['movies_list']:
     # TODO : SEND TO MOVIE DATABASE TO GET MOVIE INFO
