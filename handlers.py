@@ -29,11 +29,8 @@ def home():
 
         announcement_list = []
         rv = requests.get(ANNCMT + "announcement/get")
-        print(rv)
         rv_json = json.loads(rv.content)
 
-        print(rv_json)
-        Announcement
         for ann_json in rv_json['announcement_list']:
             announcement_list.append(Announcement(**ann_json))
 
@@ -51,21 +48,25 @@ def movies_index():
     search_value = request.args.get('movie_name')
     search_value = search_value if search_value is not None else ''
     rv = requests.get(MOVIE + "movie/get")
+    print(rv.status_code)
+
     if rv.status_code != 200:
         return render_template('movie/index.html', movie_list=None)
     rv_json = rv.json()
     movies = rv_json['movies']
-    
+    print(movies)
     movie_list = []
     for movie in movies:
         my_cast = []
         cast_rv = requests.get(MOVIE + "movie/get"+ movie['movie_id'] + "/cast")
         cast_json = cast_rv.json()
+        print(cast_json)
+
         if cast_rv.status_code == 200:
             for actor in cast_json['cast']:
                 my_cast.append(Actor(actor.name))
 
-        movies_list.append(Movie(movie['movie_id'],movie['movie_title'],movie['information'],movie['rating'],movie['purchase_price'],movie['video_url'],my_cast))
+        movies_list.append(Movie(movie['movie_id'],movie['movie_title'],movie['information'],movie['rating'],movie['purchase_price'],movie['cover_url'],movie['video_url'],my_cast))
 
     return render_template('movie/index.html', movie_list=movie_list)
 
