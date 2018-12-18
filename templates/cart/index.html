@@ -24,7 +24,7 @@
                                                 <div class="col-md-5 product-info"><a href="#" class="product-name">{{element.movie.title}}</a></div>
                                                     <div class="col-6 col-md-2 quantity">
                                                 <label class="d-none d-md-block" for="quantity">Duration(Days)</label>
-                                                {% if element.duration != -1 %}
+                                                {% if element.duration != 0 %}
                                                     <input type="number" value="{{element.duration}}"  class="form-control quantity-input js-number" max=14 min=7 step=7>
                                                 {% else %}
                                                     LIFE TIME
