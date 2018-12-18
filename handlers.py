@@ -241,13 +241,19 @@ def cart():
     if response.status_code != 200:
         return redirect(url_for('site.cart'))
     res_json = json.loads(response.content)
+
+    cart_list = []
     for item in res_json['item_list']:
         # Send to the movie database get movies add them to cart element
+        movie_id = item['movie_id']
         print(item)
 
+        movie_info_request = requests.get(MOVIE + 'movie/get/' + str(movie_id))
+        movie_info = movie_info_request.json()
+        movie = movie_info['movie']
 
         actor_list = []
-        cast_rv = requests.get(MOVIE + "movie/get/" + str(item['movie_id']) + "/cast")
+        cast_rv = requests.get(MOVIE + "movie/get/" + str(movie_id) + "/cast")
         cast_json = cast_rv.json()
 
         if cast_rv.status_code == 200:
@@ -258,22 +264,7 @@ def cart():
         movie = Movie(movie['movie_id'], movie['movie_title'], movie['information'],
                         movie['rating']/2, movie['purchase_price'], movie['cover_url'], movie['video_url'], Cast(actor_list))
         
-    
-    # TODO: Connect these with db
-    my_cast = Cast([Actor('Brad Pitt'),
-                    Actor('Nikol Varsov')])
-
-            
-
-    
-    movie = Movie(1, 'Bohem', 'Bohemian Rhapsody', 1, 200,
-                  "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4", my_cast),
-    movie_two = Movie(1, 'Bohem', 'Bohemian Rhapsody', 4, 100,
-                  "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4", my_cast),
-    
-    
-    cart_list = [CartElemnt(movie, -1, 100), CartElemnt(movie_two, 7, 500),
-                 CartElemnt(movie_two, 7, 400), CartElemnt(movie_two, 7, 300)]
+        cart_list.append(CartElemnt(movie, item['duration'], int(float(item['price']))))
     
     return render_template('cart/index.html', cart_list=cart_list)
 
@@ -353,13 +344,41 @@ def add_announcement():
     # print(form['movie'])
     return redirect(url_for('site.admin'))
 
-
-@site.route('/payment', methods=['GET', 'POST'])
+@site.route('/payment/', methods=['GET', 'POST'])
 def payment():
     if not current_user.is_authenticated:
         return redirect(url_for('site.home'))
     if request.method == 'GET':
-        return render_template('payment/index.html', form=None)
+        response = requests.get(PAYMENT + "cart/get/"+str(current_user.id))
+        if response.status_code != 200:
+            return redirect(url_for('site.cart'))
+        res_json = json.loads(response.content)
+
+        cart_list = []
+        for item in res_json['item_list']:
+            # Send to the movie database get movies add them to cart element
+            movie_id = item['movie_id']
+            print(item)
+
+            movie_info_request = requests.get(MOVIE + 'movie/get/' + str(movie_id))
+            movie_info = movie_info_request.json()
+            movie = movie_info['movie']
+
+            actor_list = []
+            cast_rv = requests.get(MOVIE + "movie/get/" + str(movie_id) + "/cast")
+            cast_json = cast_rv.json()
+
+            if cast_rv.status_code == 200:
+                for actor in cast_json['cast']:
+                    actor_list.append(Actor(actor['name']))
+
+            print(actor_list)
+            movie = Movie(movie['movie_id'], movie['movie_title'], movie['information'],
+                            movie['rating']/2, movie['purchase_price'], movie['cover_url'], movie['video_url'], Cast(actor_list))
+            
+            cart_list.append(CartElemnt(movie, item['duration'], int(float(item['price']))))
+    
+        return render_template('payment/index.html', form=None, cart_list=cart_list)
     else:
         form = request.form
         form.data = {}
@@ -380,15 +399,13 @@ def payment():
             'cost': form['price']
         }
 
-        # CHANGE this endpoint
-        endpoint = 'http://dfcf2d0f.ngrok.io/payment/pay/'+current_user.id
-        rv = requests.post(endpoint, json=pay_json)
+        rv = requests.post(PAYMENT + 'payment/pay/' + str(current_user.id), json=pay_json)
 
-        if rv != 200:
+        if rv.status_code != 200:
             form.errors['notcompleted'] = 'Payment is not accepted. Please try different card.'
-            return render_template('payment/index.html', form=form)
+            return render_template('payment/index.html', form=form, cart_list=cart_list)
         else:
-            return redirect(url_for('site.movies'))
+            return redirect(url_for('site.movies_index'))
 
 
 @site.route('/register', methods=['GET', 'POST'])
