@@ -49,20 +49,22 @@ def movies_index():
     # Take the search value parameter
     search_value = request.args.get('movie_name')
     search_value = search_value if search_value is not None else ''
+    rv = requests.get(MOVIE + "movie/get")
+    if rv.status_code != 200
+        return render_template('movie/index.html', movie_list=None)
+    rv_json = rv.json()
+    movies = rv_json['movies']
+    
+    movie_list = []
+    for movie in movies:
+        my_cast = []
+        cast_rv = requests.get(MOVIE + "movie/get"+ movie['movie_id'] + "/cast")
+        cast_json = cast_rv.json()
+        if cast_rv.status_code == 200:
+            for actor in cast_json['cast']:
+                my_cast.append(Actor(actor.name))
 
-    # TODO: Change this with microservice with the search params
-    my_cast = Cast([Actor('Ali', 'Veli', 'Venom'),
-                    Actor('Hasan', 'Mahmut', 'Second Vecom')])
-    movie_list = [
-        Movie(0, 'Ali', 'Lorem ipsum', 1, 100,
-              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4"),
-        Movie(2, 'Ali', 'Lorem ipsum', 3, 100,
-              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4"),
-        Movie(3, 'Ali', 'Lorem ipsum', 5, 100,
-              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4"),
-        Movie(4, 'Ali', 'Lorem ipsum', 2.5, 100,
-              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4")
-    ]
+        movies_list.append(Movie(movie['movie_id'],movie['movie_title'],movie['information'],movie['rating'],movie['purchase_price'],movie['video_url'],my_cast))
 
     return render_template('movie/index.html', movie_list=movie_list)
 
@@ -152,7 +154,7 @@ def add_movie():
 
     movie_json = {"movie_id":imdb_id,"rent":rent_price,"purchase":rent_price,"video_path":video_path}
     rv = requests.post(MOVIE + "movie/add",json=movie_json)
-    
+
     return redirect(url_for('site.admin'))
 
 

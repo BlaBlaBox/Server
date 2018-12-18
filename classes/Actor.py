@@ -1,5 +1,5 @@
 class Actor():
-    def __init__(self, name, surname, character_in_movie):
+    def __init__(self, name):
         self.name = name
-        self.surname = surname
-        self.character_in_movie = character_in_movie
+
+
