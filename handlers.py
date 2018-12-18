@@ -195,14 +195,14 @@ def add_movie():
 
     if video and allowed_file(video.filename):
         filename = secure_filename(video.filename)
-        videopath = "/vid/movies/"
-        videopath = current_app.config['UPLOAD_FOLDER'] + videopath + filename
-        absolute_path = os.path.abspath("./" + videopath)
+        video_path = "/vid/movies/"
+        video_path = current_app.config['UPLOAD_FOLDER'] + video_path + filename
+        absolute_path = os.path.abspath("./" + video_path)
         print("video_path=", video_path)
         print("absolute=", absolute_path)
         video.save(absolute_path)
 
-    movie_json = {"movie_id":imdb_id,"rent":rent_price,"purchase":rent_price,"video_url":video_path}
+    movie_json = {"movie_id":imdb_id,"rent":rent_price,"purchase":rent_price,"video_url":absolute_path}
     rv = requests.post(MOVIE + "movie/add",json=movie_json)
 
     return redirect(url_for('site.admin'))
