@@ -118,12 +118,15 @@ def movie_watch(movie_id):
 
 @site.route('/movies/update', methods=['POST'])
 def movies_update_router():
-    print(request.form)
+    if not current_user.is_admin:
+        return redirect(url_for('site.home'))
     return redirect(url_for('site.movies_update', movie_id=request.form['movie_selection']))
 
 
 @site.route('/movies/delete', methods=['POST'])
 def movies_delete():
+    if not current_user.is_admin:
+        return redirect(url_for('site.home'))
     # TODO: Delete movie
     print(request.form['movie_selection'])
 
@@ -177,7 +180,6 @@ def aboutus():
 
 @site.route('/admin', methods=['GET', 'POST'])
 def admin():
-    ## TODO : ADD ADMIN AUTH
     if not current_user.is_admin:
         return redirect(url_for('site.home'))
     # TODO: Change this with microservice and change this tuple list anout movie
@@ -198,6 +200,14 @@ def admin():
 def cart():
     if not current_user.is_authenticated:
         return redirect(url_for('site.home'))
+
+    response = requests.get(PAYMENT + "cart/get/"+str(current_user.id))
+    if response.status_code != 200:
+        return redirect(url_for('site.cart'))
+    res_json = json.loads(response.content)
+    for item in res_json['item_list']:
+        # Send to the movie database get movies add them to cart element
+        print(item.movie_id)
     # TODO: Connect these with db
     my_cast = Cast([Actor('Ali', 'Veli', 'Venom'),
                     Actor('Hasan', 'Mahmut', 'Second Vecom')])
@@ -244,6 +254,8 @@ def library():
 
 @site.route('/announcement/add', methods=['POST'])
 def add_announcement():
+    if not current_user.is_admin:
+        return redirect(url_for('site.home'))
     # TODO: Send these to db
     form = request.form
 
@@ -390,6 +402,8 @@ def search():
 
 @site.route('/user/suspend', methods=['POST'])
 def suspend_user():
+    if not current_user.is_admin:
+        return redirect(url_for('site.home'))
     # TODO: Send this user_id to the db
     user_id = request.form.get('user_selection')
     print(user_id)
