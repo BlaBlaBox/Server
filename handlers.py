@@ -1,7 +1,7 @@
 import os
 import json
 import requests
-from flask import Blueprint, render_template, redirect, current_app, url_for, request
+from flask import Blueprint, render_template, redirect, current_app, url_for, request, send_from_directory
 from flask_login import login_user, login_required, current_user, logout_user
 from werkzeug.utils import secure_filename
 
@@ -19,6 +19,11 @@ ALLOWED_EXTENSIONS = set(
 
 
 site = Blueprint('site', __name__)
+
+
+@site.route('/loaderio-e4da898c282715093e8e832a29feefd8/', methods=['GET', 'POST'])
+def load_test():
+    return send_from_directory('./', 'load_test.txt')
 
 
 @site.route('/', methods=['GET', 'POST'])
