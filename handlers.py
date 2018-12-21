@@ -1,9 +1,8 @@
+import os
 import json
 import requests
-import os
-from flask import Blueprint, render_template, redirect, current_app, url_for
-from flask import request, flash, session, abort
-from flask_login import LoginManager, login_user, login_required, current_user, logout_user
+from flask import Blueprint, render_template, redirect, current_app, url_for, request
+from flask_login import login_user, login_required, current_user, logout_user
 from werkzeug.utils import secure_filename
 
 from classes.Announcement import *
@@ -55,7 +54,7 @@ def movies_index():
         return render_template('movie/index.html', movie_list=None)
     rv_json = rv.json()
     movies = rv_json['movies']
-    
+
     movie_list = []
     for movie in movies:
         my_cast = []
@@ -73,8 +72,7 @@ def movies_index():
 @site.route('/movies/<int:movie_id>', methods=['GET', 'POST'])
 def movies_show(movie_id):
     # TODO: Change this with db by using movie_id
-    my_cast = Cast([Actor('Ali', 'Veli', 'Venom'),
-                    Actor('Hasan', 'Mahmut', 'Second Vecom')])
+    my_cast = requests.get()
     movie = Movie(1, 'Ali', 'Lorem ipsum', 4, 100,
                   'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4")
 
