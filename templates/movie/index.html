@@ -14,6 +14,7 @@
                     <div class="row">
                         <div class="col-md-3">
                             <div class="d-none d-md-block">
+                            <!--
                                 <div class="filters">
                                     <div class="filter-item">
                                         <h3>Genre</h3>
@@ -40,6 +41,7 @@
                                 <div
                                     class="form-check"><input class="form-check-input" type="checkbox" id="formCheck-8"><label class="form-check-label" for="formCheck-8"><img src="static/img/star.svg" style="width: 15px;height: 14px;"><img src="static/img/star.svg" style="width: 15px;height: 14px;"><img src="static/img/star.svg" style="width: 15px;height: 14px;"></label></div>
                         </div>
+                        -->
                     </div>
                 </div>
                 <div class="d-md-none"><a class="btn btn-link d-md-none filter-collapse" data-toggle="collapse" aria-expanded="false" aria-controls="filters" role="button" href="#filters">Filters<i class="icon-arrow-down filter-caret"></i></a>
@@ -68,7 +70,7 @@
                             <div
                                 class="form-check"><input class="form-check-input" type="checkbox" id="formCheck-8"><label class="form-check-label" for="formCheck-8"><img src="static/img/star.svg" style="width: 15px;height: 14px;"><img src="static/img/star.svg" style="width: 15px;height: 14px;"><img src="static/img/star.svg" style="width: 15px;height: 14px;"><img src="static/img/star.svg" style="width: 15px;height: 14px;"></label></div>
                         <div
-                            class="form-check"><input class="form-check-input" type="checkbox" id="formCheck-8"><label class="form-check-label" for="formCheck-8"><img src="static/img/star.svg" style="width: 15px;height: 14px;"><img src="static/img/star.svg" style="width: 15px;height: 14px;"><img src="static/img/star.svg" style="width: 15px;height: 14px;"></label></div>
+                            class="form-check"><input class="form-check-input" type="checkbox" id="formCheck-8"><label class="form-check-label" for="formCheck-8"><img src="static/img/star.svg" style="width: 15px;height: 14px;"><img src="static/img/star.svg" style="width: 15px;height: 14px;"><img src="static/img/star.svg" style="width: 15px;height: 14px;"></label></div> 
                 </div>
             </div>
             </div>
@@ -81,8 +83,8 @@
                             {% for mov in movie_list %}
                                 <div class="col-12 col-md-6 col-lg-4">
                                     <div class="clean-product-item">
-                                        <div class="image"><a href="{{url_for('site.movies_show',movie_id=2)}}"><img class="img-fluid d-block mx-auto" src={{mov.pic}}></a></div>
-                                        <div class="product-name"><a href="{{url_for('site.movies_show',movie_id = 2)}}">{{mov.title}}</a></div>
+                                        <div class="image"><a href="{{url_for('site.movies_show',movie_id=mov.id)}}"><img class="img-fluid d-block mx-auto" src={{mov.pic}}></a></div>
+                                        <div class="product-name"><a href="{{url_for('site.movies_show',movie_id = mov.id)}}">{{mov.title}}</a></div>
                                         <div class="about">
                                             <div class="rating">
 
@@ -108,7 +110,8 @@
                                 </div>
                             {% endfor %}
                     {% endif %}
-                    <nav>
+                </div>
+                     <nav>
                         <ul class="pagination">
                             <li class="page-item disabled"><a class="page-link" aria-label="Previous"><span aria-hidden="true">«</span></a></li>
                             <li class="page-item active"><a class="page-link">1</a></li>
@@ -117,7 +120,6 @@
                             <li class="page-item"><a class="page-link" aria-label="Next"><span aria-hidden="true">»</span></a></li>
                         </ul>
                     </nav>
-                </div>
             </div>
             </div>
             </div>

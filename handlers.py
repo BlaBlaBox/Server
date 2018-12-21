@@ -18,7 +18,6 @@ ALLOWED_EXTENSIONS = set(
     ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp4', 'x-m4v'])
 
 
-
 site = Blueprint('site', __name__)
 
 
@@ -28,11 +27,8 @@ def home():
 
         announcement_list = []
         rv = requests.get(ANNCMT + "announcement/get")
-        print(rv)
         rv_json = json.loads(rv.content)
 
-        print(rv_json)
-        Announcement
         for ann_json in rv_json['announcement_list']:
             announcement_list.append(Announcement(**ann_json))
 
@@ -44,39 +40,97 @@ def search_movie():
     return redirect(url_for('site.movies_index', movie_name=request.form['search']))
 
 
+@site.route('/movie/<int:movie_id>/<int:price>/rent', methods=['POST'])
+def movie_rent(movie_id, price):
+    rent_json = {
+        'movie_id': str(movie_id),
+        'price': str(price),
+        'duration': '7'
+    }
+    print(rent_json)
+
+    rv = requests.post(PAYMENT + "cart/item/create/" + str(current_user.id), json=rent_json)
+    print(rv.content)
+
+    return redirect(url_for('site.movies_index'))
+
+
+@site.route('/movie/<int:movie_id>/<int:price>/buy', methods=['POST'])
+def movie_buy(movie_id, price):
+
+    buy_json = {
+        'movie_id': str(movie_id),
+        'price': str(price),
+        'duration': '0'
+    }
+
+    print(buy_json)
+    rv = requests.post(PAYMENT + "cart/item/create/" + str(current_user.id), json=buy_json)
+    print(rv.content)
+    return redirect(url_for('site.movies_index'))
+
+
+def take_movie_from_json(movie):
+    return [movie['movie_id'], movie['movie_title'], movie['release_year'], movie['added_at'], movie['duration'], movie['rating']/2, movie['information'], movie['cover_url'], movie['video_url'], movie['rent_price'], movie['purchase_price']]
+
+
 @site.route('/movies', methods=['GET', 'POST'])
 def movies_index():
     # Take the search value parameter
     search_value = request.args.get('movie_name')
     search_value = search_value if search_value is not None else ''
+
     rv = requests.get(MOVIE + "movie/get")
+    print(rv.status_code)
+
     if rv.status_code != 200:
         return render_template('movie/index.html', movie_list=None)
     rv_json = rv.json()
     movies = rv_json['movies']
-
     movie_list = []
+
     for movie in movies:
         my_cast = []
-        cast_rv = requests.get(MOVIE + "movie/get"+ movie['movie_id'] + "/cast")
+
+        cast_rv = requests.get(MOVIE + "movie/get/" +
+                               str(movie['movie_id']) + "/cast")
         cast_json = cast_rv.json()
+        print(cast_json)
+
         if cast_rv.status_code == 200:
             for actor in cast_json['cast']:
-                my_cast.append(Actor(actor.name))
+                my_cast.append(Actor(actor['name']))
 
-        movies_list.append(Movie(movie['movie_id'],movie['movie_title'],movie['information'],movie['rating'],movie['purchase_price'],movie['video_url'],my_cast))
+            movie_list.append(Movie(*take_movie_from_json(movie), my_cast))
 
+    movie_list = [movie for movie in movie_list if search_value.lower() in movie.title.lower()]
     return render_template('movie/index.html', movie_list=movie_list)
 
 
 @site.route('/movies/<int:movie_id>', methods=['GET', 'POST'])
 def movies_show(movie_id):
-    # TODO: Change this with db by using movie_id
-    my_cast = requests.get()
-    movie = Movie(1, 'Ali', 'Lorem ipsum', 4, 100,
-                  'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4")
 
-    return render_template('movie/show.html', movie=movie)
+    # TODO: Change this with db by using movie_id
+
+    movie_info_request = requests.get(MOVIE + 'movie/get/' + str(movie_id))
+    movie_info = movie_info_request.json()
+    movie = movie_info['movie']
+
+    actor_list = []
+
+    cast_rv = requests.get(MOVIE + "movie/get/" + str(movie_id) + "/cast")
+    cast_json = cast_rv.json()
+
+    if cast_rv.status_code == 200:
+        for actor in cast_json['cast']:
+            actor_list.append(Actor(actor['name']))
+
+        print(actor_list)
+        movie = Movie(*take_movie_from_json(movie), Cast(actor_list))
+
+
+        return render_template('movie/show.html', movie=movie)
+    return redirect(url_for('site.home'))
 
 
 @site.route('/movies/<int:movie_id>/update', methods=['GET', 'POST'])
@@ -103,13 +157,13 @@ def movie_watch(movie_id):
     if not flag:
         return redirect(url_for('site.library'))
 
-    # GET MOVIE WITH MOVIE ID
-    my_cast = Cast([Actor('Ali', 'Veli', 'Venom'),
-                    Actor('Hasan', 'Mahmut', 'Second Vecom')])
-    movie = Movie(1, 'Ali', 'Lorem ipsum', 4, 100,
-                  'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rhapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4")
+    movie_info_request = requests.get(MOVIE + 'movie/get/' + str(movie_id))
+    print(movie_info_request)
+    movie_info = movie_info_request.json()
+    movie_info = movie_info['movie']
+    my_movie = Movie(*take_movie_from_json(movie_info), None)
 
-    return render_template('watch/index.html', movie=movie)
+    return render_template('watch/index.html', movie=my_movie)
 
 
 @site.route('/movies/update', methods=['POST'])
@@ -144,15 +198,15 @@ def add_movie():
 
     if video and allowed_file(video.filename):
         filename = secure_filename(video.filename)
-        videopath = "/vid/movies/"
-        videopath = current_app.config['UPLOAD_FOLDER'] + videopath + filename
-        absolute_path = os.path.abspath("./" + videopath)
+        video_path = "/vid/movies/"
+        video_path = current_app.config['UPLOAD_FOLDER'] + video_path + filename
+        absolute_path = os.path.abspath("./" + video_path)
         print("video_path=", video_path)
         print("absolute=", absolute_path)
         video.save(absolute_path)
 
-    movie_json = {"movie_id":imdb_id,"rent":rent_price,"purchase":rent_price,"video_url":video_path}
-    rv = requests.post(MOVIE + "movie/add",json=movie_json)
+    movie_json = {"movie_id":imdb_id, "rent":rent_price, "purchase":purchase_price, "video_url":video_path}
+    requests.post(MOVIE + "movie/add", json=movie_json)
 
     return redirect(url_for('site.admin'))
 
@@ -166,10 +220,20 @@ def aboutus():
 def admin():
     if not current_user.is_admin:
         return redirect(url_for('site.home'))
-    # TODO: Change this with microservice and change this tuple list anout movie
     # MOVIE_LIST should got changed with classes. Becuase update form should be filled with default values
-    movie_list = [('ali', 1), ('ata', 2), ('bak', 3),
-                  ('irem', 4), ('okula', 5), ('git', 6)]
+    rv = requests.get(MOVIE + "movie/get")
+    print(rv.status_code)
+
+    if rv.status_code != 200:
+        return render_template('movie/index.html', movie_list=None)
+    rv_json = rv.json()
+    movies = rv_json['movies']
+    movie_list = []
+
+    for movie in movies:
+        movie_list.append((movie['movie_title'], movie['movie_id']))
+
+
     # Find all users
     user_list = []
     rv = requests.get(AUTH + "user/get")
@@ -190,19 +254,30 @@ def cart():
     if response.status_code != 200:
         return redirect(url_for('site.cart'))
     res_json = json.loads(response.content)
+
+    cart_list = []
     for item in res_json['item_list']:
         # Send to the movie database get movies add them to cart element
+        movie_id = item['movie_id']
         print(item)
-    # TODO: Connect these with db
-    my_cast = Cast([Actor('Ali', 'Veli', 'Venom'),
-                    Actor('Hasan', 'Mahmut', 'Second Vecom')])
 
-    movie = Movie(1, 'Ali', 'Lorem ipsum', 4, 100,
-                  'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4")
-    movie_two = Movie(1, 'Ali', 'Lorem ipsum', 4, 100,
-                      'Mahmut HASANANANANANAN', my_cast, "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4")
-    cart_list = [CartElemnt(movie, -1, 100), CartElemnt(movie_two, 7, 500),
-                 CartElemnt(movie_two, 7, 400), CartElemnt(movie_two, 7, 300)]
+        movie_info_request = requests.get(MOVIE + 'movie/get/' + str(movie_id))
+        movie_info = movie_info_request.json()
+        movie = movie_info['movie']
+
+        actor_list = []
+        cast_rv = requests.get(MOVIE + "movie/get/" + str(movie_id) + "/cast")
+        cast_json = cast_rv.json()
+
+        if cast_rv.status_code == 200:
+            for actor in cast_json['cast']:
+                actor_list.append(Actor(actor['name']))
+
+        print(actor_list)
+        movie = Movie(*take_movie_from_json(movie), Cast(actor_list))
+
+        cart_list.append(CartElemnt(movie, item['duration'], int(float(item['price']))))
+
     return render_template('cart/index.html', cart_list=cart_list)
 
 
@@ -213,28 +288,36 @@ def library():
 
     response = requests.get(PAYMENT + "payment/rent/get/"+str(current_user.id))
     if response.status_code != 200:
-        return redirect(url_for('site.library'))
+        return redirect(url_for('site.home'))
+
     res_json = json.loads(response.content)
+    print(res_json)
+
+    owned_movie_id_list = []
+    my_movie_list = []
     for movie in res_json['movies_list']:
-        # TODO : SEND TO MOVIE DATABASE TO GET MOVIE INFO
-        #    movie['movie_id']
-        print(movie)
+        owned_movie_id_list.append(movie['movie_id'])
 
-    # TODO: Change this with microservice with the search params
-    my_cast = Cast([Actor('Ali', 'Veli', 'Venom'),
-                    Actor('Hasan', 'Mahmut', 'Second Vecom')])
-    movie_list = [
-        Movie(0, 'Ali', 'Lorem ipsum', 1, 100,
-              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4"),
-        Movie(1, 'Ali', 'Lorem ipsum', 3, 100,
-              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4"),
-        Movie(2, 'Ali', 'Lorem ipsum', 5, 100,
-              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4"),
-        Movie(3, 'Ali', 'Lorem ipsum', 2.5, 100,
-              'Mahmut Dogan', my_cast, "/static/img/movies/bohemian_rapsody.jpg", "/static/vid/movies/bohemian_rhapsody.mp4")
-    ]
+    print(owned_movie_id_list)
+    for movie_id in owned_movie_id_list:
+        my_cast = []
+        print(MOVIE + 'movie/get/' + str(movie_id))
+        movie_info_request = requests.get(MOVIE + 'movie/get/' + str(movie_id))
+        print(movie_info_request)
+        movie_info = movie_info_request.json()
+        movie_info = movie_info['movie']
 
-    return render_template('library/index.html', movie_list=movie_list, form=None)
+        cast_rv = requests.get(MOVIE + "movie/get/" + str(movie_info['movie_id']) + "/cast")
+        cast_json = cast_rv.json()
+        print(cast_json)
+        if cast_rv.status_code == 200:
+            for actor in cast_json['cast']:
+                my_cast.append(Actor(actor['name']))
+
+            my_movie_list.append(Movie(*take_movie_from_json(movie_info), my_cast))
+
+
+    return render_template('library/index.html', movie_list=my_movie_list)
 
 
 @site.route('/announcement/add', methods=['POST'])
@@ -251,31 +334,44 @@ def add_announcement():
         'movie_link': form['movie']
     }
     print(ann_json)
-    rv = requests.post(ANNCMT + "announcement/create", json=ann_json)
-    # res_json = json.loads(rv.content)
+    requests.post(ANNCMT + "announcement/create", json=ann_json)
 
-    #     if rv.status_code != 200:
-    #         form.errors['notcompleted'] = 'Login is not successful. Please try again.'
-    #         return render_template('register/index.html', form=form)
-    #     else:
-    #     #    print(json.loads(res_json.content))
-    #         user = UserObj(**res_json["user"])
-    #         login_user(user)
-    #         return redirect(url_for('site.home'))
-
-    # print()
-    # print()
-    # print(form['image'])
-    # print(form['movie'])
     return redirect(url_for('site.admin'))
 
-
-@site.route('/payment', methods=['GET', 'POST'])
+@site.route('/payment/', methods=['GET', 'POST'])
 def payment():
     if not current_user.is_authenticated:
         return redirect(url_for('site.home'))
     if request.method == 'GET':
-        return render_template('payment/index.html', form=None)
+        response = requests.get(PAYMENT + "cart/get/"+str(current_user.id))
+        if response.status_code != 200:
+            return redirect(url_for('site.cart'))
+        res_json = json.loads(response.content)
+
+        cart_list = []
+        for item in res_json['item_list']:
+            # Send to the movie database get movies add them to cart element
+            movie_id = item['movie_id']
+            print(item)
+
+            movie_info_request = requests.get(MOVIE + 'movie/get/' + str(movie_id))
+            movie_info = movie_info_request.json()
+            movie = movie_info['movie']
+
+            actor_list = []
+            cast_rv = requests.get(MOVIE + "movie/get/" + str(movie_id) + "/cast")
+            cast_json = cast_rv.json()
+
+            if cast_rv.status_code == 200:
+                for actor in cast_json['cast']:
+                    actor_list.append(Actor(actor['name']))
+
+            print(actor_list)
+            movie = Movie(*take_movie_from_json(movie), Cast(actor_list))
+
+            cart_list.append(CartElemnt(movie, item['duration'], int(float(item['price']))))
+
+        return render_template('payment/index.html', form=None, cart_list=cart_list)
     else:
         form = request.form
         form.data = {}
@@ -296,15 +392,13 @@ def payment():
             'cost': form['price']
         }
 
-        # CHANGE this endpoint
-        endpoint = 'http://dfcf2d0f.ngrok.io/payment/pay/'+current_user.id
-        rv = requests.post(endpoint, json=pay_json)
+        rv = requests.post(PAYMENT + 'payment/pay/' + str(current_user.id), json=pay_json)
 
-        if rv != 200:
+        if rv.status_code != 200:
             form.errors['notcompleted'] = 'Payment is not accepted. Please try different card.'
-            return render_template('payment/index.html', form=form)
+            return render_template('payment/index.html', form=form, cart_list=cart_list)
         else:
-            return redirect(url_for('site.movies'))
+            return redirect(url_for('site.movies_index'))
 
 
 @site.route('/register', methods=['GET', 'POST'])
@@ -355,8 +449,7 @@ def login():
     if request.method == 'GET':
         if current_user.is_authenticated:
             return redirect(url_for('site.home'))
-        else:
-            return render_template('login/index.html', form=None)
+        return render_template('login/index.html', form=None)
     else:
         form = request.form
         form.data = {}
@@ -380,6 +473,11 @@ def login():
             # print(json.loads(res_json.content))
             user = UserObj(**res_json["user"])
             login_user(user)
+
+            # Create cart
+            print(PAYMENT + "cart/create/" + str(user.id))
+            requests.post(PAYMENT + "cart/create/" + str(user.id))
+
             return redirect(url_for('site.home'))
 
 
@@ -397,8 +495,3 @@ def suspend_user():
     print(user_id)
 
     return redirect(url_for('site.admin'))
-# @site.route('/movie')
-# def movie():
-#     # a = requests.get('http://053e8eac.ngrok.io/payment/create').content
-#     # print('asdf')
-#     return requests.get('http://053e8eac.ngrok.io/payment/create').content
