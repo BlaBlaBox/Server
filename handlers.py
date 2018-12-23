@@ -14,9 +14,7 @@ from classes.User import UserObj
 
 from api_links import AUTH, MOVIE, PAYMENT, ANNCMT
 
-ALLOWED_EXTENSIONS = set(
-    ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp4', 'x-m4v'])
-
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp4', 'x-m4v'])
 
 site = Blueprint('site', __name__)
 
@@ -180,9 +178,11 @@ def movies_update_router():
 @site.route('/movies/delete', methods=['POST'])
 def movies_delete():
     if not current_user.is_admin:
-        return redirect(url_for('site.home'))
-    # TODO: Delete movie
-    print(request.form['movie_selection'])
+        return abort(401)
+
+    movie_id = request.form('movie_selection')
+    movie_json = {"movie_id": movie_id}
+    requests.post(MOVIE+"movie/delete", json=movie_json)
 
     return redirect(url_for('site.admin'))
 

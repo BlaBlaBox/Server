@@ -1,5 +1,5 @@
 import requests
-from flask import Flask, abort
+from flask import Flask, abort, render_template
 #from flask import Blueprint
 from flask_login import LoginManager
 from handlers import site, login
@@ -35,6 +35,20 @@ def create_app():
 
 
 app = create_app()
+
+
+@app.errorhandler(401)
+def unauthorized_access_page(err):
+    return render_template("error/401.html")
+
+@app.errorhandler(403)
+def access_denied_page(err):
+    return render_template("error/403.html")
+
+@app.errorhandler(404)
+def page_not_found(err):
+    return render_template("error/404.html")
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
