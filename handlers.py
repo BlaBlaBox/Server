@@ -231,13 +231,14 @@ def admin():
     if rv_movies.status_code != 200 and rv_movies.status_code != 204:
         return abort(404)
 
-    rv_json = rv_movies.json()
-    movies = rv_json['movies']
     movie_list = []
+    if rv_movies.status_code == 200:
+        rv_json = rv_movies.json()
+        movies = rv_json['movies']
 
-    if movies is not None:
-        for movie in movies:
-            movie_list.append((movie['movie_title'], movie['movie_id']))
+        if movies:
+            for movie in movies:
+                movie_list.append((movie['movie_title'], movie['movie_id']))
 
 
     # Find all users

@@ -1,11 +1,9 @@
 import requests
 from flask import Flask, abort, render_template
-#from flask import Blueprint
 from flask_login import LoginManager
 from handlers import site, login
 from api_links import AUTH
 from classes.User import UserObj
-# from classes.UserAccount import UserAccount
 
 
 lm = LoginManager()
