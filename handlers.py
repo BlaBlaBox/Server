@@ -180,7 +180,7 @@ def movies_delete():
     if not current_user.is_admin:
         return abort(401)
 
-    movie_id = request.form('movie_selection')
+    movie_id = request.form['movie_selection']
     movie_json = {"movie_id": movie_id}
     requests.post(MOVIE+"movie/delete", json=movie_json)
 
