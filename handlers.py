@@ -1,15 +1,15 @@
 import os
 import json
 import requests
-from flask import Blueprint, render_template, redirect, current_app, url_for, request, send_from_directory
+from flask import Blueprint, render_template, redirect, current_app, url_for, request, send_from_directory, abort
 from flask_login import login_user, login_required, current_user, logout_user
 from werkzeug.utils import secure_filename
 
-from classes.Announcement import *
-from classes.Movie import *
-from classes.Actor import *
-from classes.Cast import *
-from classes.CartElement import *
+from classes.Announcement import Announcement
+from classes.Movie import Movie
+from classes.Actor import Actor
+from classes.Cast import Cast
+from classes.CartElement import CartElement
 from classes.User import UserObj
 
 from api_links import AUTH, MOVIE, PAYMENT, ANNCMT
@@ -28,16 +28,18 @@ def load_test():
 
 @site.route('/', methods=['GET', 'POST'])
 def home():
-    if request.method == 'GET':
 
-        announcement_list = []
-        rv = requests.get(ANNCMT + "announcement/get")
-        rv_json = json.loads(rv.content)
+    announcement_list = []
+    rv_anno = requests.get(ANNCMT + "announcement/get")
+    rv_json = json.loads(rv_anno.content)
 
-        for ann_json in rv_json['announcement_list']:
-            announcement_list.append(Announcement(**ann_json))
+    for ann_json in rv_json['announcement_list']:
+        announcement_list.append(Announcement(**ann_json))
 
-        return render_template('home/index.html', announcement_list=announcement_list)
+    if not announcement_list:
+        announcement_list = None
+
+    return render_template('home/index.html', announcement_list=announcement_list)
 
 
 @site.route('/search', methods=['POST'])
@@ -85,22 +87,19 @@ def movies_index():
     search_value = request.args.get('movie_name')
     search_value = search_value if search_value is not None else ''
 
-    rv = requests.get(MOVIE + "movie/get")
-    print(rv.status_code)
+    rv_movies = requests.get(MOVIE + "movie/get")
 
-    if rv.status_code != 200:
+    if rv_movies.status_code != 200:
         return render_template('movie/index.html', movie_list=None)
-    rv_json = rv.json()
+    rv_json = rv_movies.json()
     movies = rv_json['movies']
     movie_list = []
 
     for movie in movies:
         my_cast = []
 
-        cast_rv = requests.get(MOVIE + "movie/get/" +
-                               str(movie['movie_id']) + "/cast")
+        cast_rv = requests.get(MOVIE + "movie/get/" + str(movie['movie_id']) + "/cast")
         cast_json = cast_rv.json()
-        print(cast_json)
 
         if cast_rv.status_code == 200:
             for actor in cast_json['cast']:
@@ -226,23 +225,25 @@ def admin():
     if not current_user.is_admin:
         return redirect(url_for('site.home'))
     # MOVIE_LIST should got changed with classes. Becuase update form should be filled with default values
-    rv = requests.get(MOVIE + "movie/get")
-    print(rv.status_code)
+    rv_movies = requests.get(MOVIE + "movie/get")
+    print(rv_movies.status_code)
 
-    if rv.status_code != 200:
-        return render_template('movie/index.html', movie_list=None)
-    rv_json = rv.json()
+    if rv_movies.status_code != 200 and rv_movies.status_code != 204:
+        return abort(404)
+
+    rv_json = rv_movies.json()
     movies = rv_json['movies']
     movie_list = []
 
-    for movie in movies:
-        movie_list.append((movie['movie_title'], movie['movie_id']))
+    if movies is not None:
+        for movie in movies:
+            movie_list.append((movie['movie_title'], movie['movie_id']))
 
 
     # Find all users
     user_list = []
-    rv = requests.get(AUTH + "user/get")
-    rv_json = json.loads(rv.content)
+    rv_users = requests.get(AUTH + "user/get")
+    rv_json = json.loads(rv_users.content)
     for user_json in rv_json['users']:
         user_list.append(
             (user_json['username'] + ' / ' + user_json['email'], user_json['user_id']))
@@ -281,7 +282,7 @@ def cart():
         print(actor_list)
         movie = Movie(*take_movie_from_json(movie), Cast(actor_list))
 
-        cart_list.append(CartElemnt(movie, item['duration'], int(float(item['price']))))
+        cart_list.append(CartElement(movie, item['duration'], int(float(item['price']))))
 
     return render_template('cart/index.html', cart_list=cart_list)
 
@@ -374,7 +375,7 @@ def payment():
             print(actor_list)
             movie = Movie(*take_movie_from_json(movie), Cast(actor_list))
 
-            cart_list.append(CartElemnt(movie, item['duration'], int(float(item['price']))))
+            cart_list.append(CartElement(movie, item['duration'], int(float(item['price']))))
 
         return render_template('payment/index.html', form=None, cart_list=cart_list)
     else:
@@ -411,8 +412,8 @@ def register():
     if request.method == 'GET':
         if current_user.is_authenticated:
             return redirect(url_for('site.home'))
-        else:
-            return render_template('register/index.html', form=None)
+
+        return render_template('register/index.html', form=None)
     else:
         form = request.form
         form.data = {}
@@ -428,18 +429,14 @@ def register():
             'email': form['email']
         }
 
-        print(register_json)
-        rv = requests.post(AUTH + "user/register", json=register_json)
+        rv_register = requests.post(AUTH + "user/register", json=register_json)
 
-        print(json.loads(rv.content))
-        print(rv.status_code)
-        print(rv.content)
 
-        if rv.status_code != 200:
+        if rv_register.status_code != 200:
             form.errors['notcompleted'] = 'We couldn\'t registred you as user please change your info or try again.'
             return render_template('register/index.html', form=form)
-        else:
-            return redirect(url_for('site.home'))
+
+        return redirect(url_for('site.home'))
 
 
 @site.route('/logout', methods=['GET'])
@@ -464,26 +461,21 @@ def login():
             'uname_mail': form["email"],
             'password': form["password"]
         }
-        rv = requests.post(AUTH + "user/login", json=login_json)
-        res_json = json.loads(rv.content)
+        rv_login = requests.post(AUTH + "user/login", json=login_json)
+        res_json = json.loads(rv_login.content)
 
-        print(json.loads(rv.content))
-        print(rv.status_code)
-        print(rv.content)
-
-        if rv.status_code != 200:
+        if rv_login.status_code != 200:
             form.errors['notcompleted'] = 'Login is not successful. Please try again.'
             return render_template('register/index.html', form=form)
-        else:
-            # print(json.loads(res_json.content))
-            user = UserObj(**res_json["user"])
-            login_user(user)
 
-            # Create cart
-            print(PAYMENT + "cart/create/" + str(user.id))
-            requests.post(PAYMENT + "cart/create/" + str(user.id))
+        user = UserObj(**res_json["user"])
+        login_user(user)
 
-            return redirect(url_for('site.home'))
+        # Create cart
+        print(PAYMENT + "cart/create/" + str(user.id))
+        requests.post(PAYMENT + "cart/create/" + str(user.id))
+
+        return redirect(url_for('site.home'))
 
 
 @site.route('/search', methods=['GET', 'POST'])
