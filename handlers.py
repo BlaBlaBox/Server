@@ -1,7 +1,7 @@
 import os
 import json
 import requests
-from flask import Blueprint, render_template, redirect, current_app, url_for, request, send_from_directory, abort
+from flask import Blueprint, render_template, redirect, current_app, url_for, request, abort
 from flask_login import login_user, login_required, current_user, logout_user
 from werkzeug.utils import secure_filename
 
@@ -17,11 +17,6 @@ from api_links import AUTH, MOVIE, PAYMENT, ANNCMT
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp4', 'x-m4v'])
 
 site = Blueprint('site', __name__)
-
-
-@site.route('/loaderio-e4da898c282715093e8e832a29feefd8/', methods=['GET', 'POST'])
-def load_test():
-    return send_from_directory('./', 'load_test.txt')
 
 
 @site.route('/', methods=['GET', 'POST'])
@@ -135,11 +130,6 @@ def movies_show(movie_id):
     return redirect(url_for('site.home'))
 
 
-@site.route('/movies/<int:movie_id>/update', methods=['GET', 'POST'])
-def movies_update(movie_id):
-    print(movie_id)
-    return render_template('movie/update.html')
-
 
 @site.route('/movie/<int:movie_id>/watch', methods=['GET', 'POST'])
 def movie_watch(movie_id):
@@ -167,12 +157,6 @@ def movie_watch(movie_id):
 
     return render_template('watch/index.html', movie=my_movie)
 
-
-@site.route('/movies/update', methods=['POST'])
-def movies_update_router():
-    if not current_user.is_admin:
-        return redirect(url_for('site.home'))
-    return redirect(url_for('site.movies_update', movie_id=request.form['movie_selection']))
 
 
 @site.route('/movies/delete', methods=['POST'])
@@ -484,16 +468,7 @@ def search():
     return redirect(url_for('site.movies_index'))
 
 
-@site.route('/user/suspend', methods=['POST'])
-def suspend_user():
-    if not current_user.is_admin:
-        return redirect(url_for('site.home'))
-    # TODO: Send this user_id to the db
-    user_id = request.form.get('user_selection')
-    print(user_id)
 
-    return redirect(url_for('site.admin'))
-
-@site.route('/loaderio-808d59fcf551d479ee8f1bbdfd670c4f/', methods=['GET','POST'])
+@site.route('/loaderio-808d59fcf551d479ee8f1bbdfd670c4f/', methods=['GET', 'POST'])
 def send_loader():
     return current_app.send_static_file('loader/loaderio-808d59fcf551d479ee8f1bbdfd670c4f.txt')

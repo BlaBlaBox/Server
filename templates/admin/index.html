@@ -65,86 +65,51 @@
         <button class="btn btn-primary" type="submit" value="Upload" style="background-color: #e50914;margin-left: 12px;">Add</button>
     </form>
     </div>
+ 
     <hr class="new1">
-    <div class="container">
-        <p class="text-center" style="color: #e50914;margin: 0px;">Update  a Movie</p>
-        <form class="form" role="form" method="POST" action="{{url_for('site.movies_update_router')}}">
-        <div>
-            <div class="form-group" style="overflow-y: scroll;height:300px">
-                {% if movie_list %}
-                    {% for mov in movie_list %}
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="movie_selection" checked="" id="formCheck-2" value={{mov[1]}} style="background-color: #e50914;">
-                            <label class="form-check-label" for="formCheck-2" style="color: #ffffff;">{{mov[0]}}</label>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            </div>
-                <button class="btn btn-primary" type="submit" style="margin-top: 16px;background-color: #e50914;margin-left: 0px;">Update</button>
-            </div>
-        </div>
-        </form>
-        <hr class="new1">
         <div class="container">
-        <p class="text-center" style="color: #e50914;margin: 0px;"> Remove a Movie</p>
-        <form class="form" role="form" method="POST" action="{{url_for('site.movies_delete')}}">
-        <div>
-            <div class="form-group" style="overflow-y: scroll;height:300px">
-               {% if movie_list %}
-                    {% for mov in movie_list %}
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="movie_selection" checked="" id="formCheck-2", value= {{mov[1]}} style="background-color: #e50914;">
-                            <label class="form-check-label" for="movies" style="color: #ffffff;">{{mov[0]}}</label>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            </div>
-                <button class="btn btn-primary" type="submit" style="margin-left: 16px;margin-top: 16px;background-color: #e50914;">Remove</button>
-            </div>
-        </div>
-        </form>
-        </div>
-
-        <hr class="new1">
-        <form class="form" role="form" method="POST" action="{{url_for('site.suspend_user')}}">
-        <div class="container">
-            <p class="text-center" style="color: #e50914;margin: 0px;">Suspend an Account</p>
-            <div>
-                <div class="form-group" style="overflow-y: scroll;height:300px">
-                    {% if user_list %}
-                        {% for us in user_list %}
+            <p class="text-center" style="color: #e50914;margin: 0px;"> Remove a Movie</p>
+            <form class="form" role="form" method="POST" action="{{url_for('site.movies_delete')}}">
+                <div>
+                    <div class="form-group" style="overflow-y: scroll;height:300px">
+                    {% if movie_list %}
+                        {% for mov in movie_list %}
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="user_selection" checked="" id="formCheck-2", value= {{us[1]}} style="background-color: #e50914;">
-                                <label class="form-check-label" for="movies" style="color: #ffffff;">{{us[0]}}</label>
+                                <input class="form-check-input" type="radio" name="movie_selection" checked="" id="formCheck-2", value= {{mov[1]}} style="background-color: #e50914;">
+                                <label class="form-check-label" for="movies" style="color: #ffffff;">{{mov[0]}}</label>
                             </div>
                         {% endfor %}
                     {% endif %}
-                </div>
-                    <button class="btn btn-primary" type="submit" style="margin-top: 16px;background-color: #e50914;margin-left: 0px;">Suspend</button>
-            </div>
-            </form>
-            <hr class="new1">
-            <form class="form" role="form" method="POST" action="{{url_for('site.add_announcement')}}">
-                <div class="container">
-                    <p class="text-center" style="color: #e50914;margin: 0px;">Publish an Announcement</p>
-                    <div>
-                        <div class="form-group" style="margin-top: 8px;">
-                            <div class="row" style="margin-top: 8px;">
-                                <div class="col"><label style="color: #e50914;">Announcement title:&nbsp;</label>                                <input class="form-control" type="text" name="title" required="" placeholder="Announcement title" id="form_name" data-error="Wrong id"></div>
-                            </div>
-                            <div class="row" style="margin-top: 8px;">
-                                <div class="col"><label style="color: #e50914;">Announcement text:&nbsp;</label><input class="form-control" type="text" name="text" required="" placeholder="Announcement text" id="form_name" data-error="Wrong id"></div>
-                            </div>
-                            <div class="row" style="margin-top: 8px;">
-                                <div class="col"><label style="color: #e50914;">Image link :&nbsp;</label><input class="form-control" type="text" name="image" required="" placeholder="Announcement image link" id="form_name" data-error="Wrong id"></div>
-                            </div>
-                            <div class="row" style="margin-top: 8px;">
-                                <div class="col"><label style="color: #e50914;">Movie link:&nbsp;</label><input class="form-control" type="text" name="movie" required="" placeholder="Announcement movie link" id="form_name" data-error="Wrong id"></div>
-                            </div><button class="btn btn-primary" type="submit" style="background-color: #e50914;margin-top: 8px;">Publish</button></div>
-                        </div>
                     </div>
-                </form>
-            </main>
+                    <button class="btn btn-primary" type="submit" style="margin-left: 16px;margin-top: 16px;background-color: #e50914;">Remove</button>
+                </div>
+            </form>
+        </div>
+
+    <hr class="new1">
+        <form class="form" role="form" method="POST" action="{{url_for('site.add_announcement')}}">
+            <div class="container">
+                <p class="text-center" style="color: #e50914;margin: 0px;">Publish an Announcement</p>
+                <div>
+                    <div class="form-group" style="margin-top: 8px;">
+                        <div class="row" style="margin-top: 8px;">
+                            <div class="col"><label style="color: #e50914;">Announcement title:&nbsp;</label>                                <input class="form-control" type="text" name="title" required="" placeholder="Announcement title" id="form_name" data-error="Wrong id"></div>
+                        </div>
+                        <div class="row" style="margin-top: 8px;">
+                            <div class="col"><label style="color: #e50914;">Announcement text:&nbsp;</label><input class="form-control" type="text" name="text" required="" placeholder="Announcement text" id="form_name" data-error="Wrong id"></div>
+                        </div>
+                        <div class="row" style="margin-top: 8px;">
+                            <div class="col"><label style="color: #e50914;">Image link :&nbsp;</label><input class="form-control" type="text" name="image" required="" placeholder="Announcement image link" id="form_name" data-error="Wrong id"></div>
+                        </div>
+                        <div class="row" style="margin-top: 8px;">
+                            <div class="col"><label style="color: #e50914;">Movie link:&nbsp;</label><input class="form-control" type="text" name="movie" required="" placeholder="Announcement movie link" id="form_name" data-error="Wrong id"></div>
+                        </div>
+                        <button class="btn btn-primary" type="submit" style="background-color: #e50914;margin-top: 8px;">Publish</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </main>
 </body>
 
-            {% endblock %}
+{% endblock %}
