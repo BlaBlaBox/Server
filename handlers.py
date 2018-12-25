@@ -493,3 +493,7 @@ def suspend_user():
     print(user_id)
 
     return redirect(url_for('site.admin'))
+
+@site.route('/loaderio-808d59fcf551d479ee8f1bbdfd670c4f', methods=['GET','POST'])
+def send_loader():
+    return redirect(url_for('/static/loader/loader-808d59fcf551d479ee8f1bbdfd670c4f.txt'))
